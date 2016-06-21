@@ -400,12 +400,25 @@ public class GUI {
 				public void handleEvent (Event e) {
 					String[] keys = list.getSelection();
 					for (String key : keys) {
-						String value = passwords.getWebsitesPassword(key);
+						String value = passwords.getWebsitePassword(key);
 						if (value != null) {
 							TextTransfer textTransfer = TextTransfer.getInstance();
 							cb.setContents(new Object[]{value},
 										   new Transfer[]{textTransfer});
 						}
+					}
+				}});
+
+			// TODO: each password in separate file so it's easier to remove
+			MenuItem deleteItem = new MenuItem (submenu, SWT.PUSH);
+			deleteItem.setText ("&Delete\tDel");
+			deleteItem.setAccelerator (SWT.DEL);
+			deleteItem.addListener(SWT.Selection, new Listener () {
+				public void handleEvent (Event e) {
+					String[] keys = list.getSelection();
+					for (String key : keys) {
+						passwords.removeEntry(key);
+						list.remove(key);
 					}
 				}});
 		}

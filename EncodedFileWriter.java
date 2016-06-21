@@ -1,6 +1,7 @@
 package PwdManager;
 
 import java.io.*;
+import java.nio.file.*;
 
 public class EncodedFileWriter {
 	private FileOutputStream fileOutStream;
@@ -11,6 +12,14 @@ public class EncodedFileWriter {
 
 	public void close() throws IOException {
 		fileOutStream.close();
+	}
+
+	public static void deleteFile(String path) {
+		try {
+			Files.delete(Paths.get(path));
+		} catch (IOException e) {
+			Logger.logError("Can't delete file.", e);
+		}
 	}
 
 	public void writeData(byte[] data) throws IOException {

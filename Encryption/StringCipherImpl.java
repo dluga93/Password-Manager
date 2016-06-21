@@ -1,4 +1,4 @@
-package Encryption;
+package PwdManager.Encryption;
 import PwdManager.Logger;
 
 import java.nio.charset.*;

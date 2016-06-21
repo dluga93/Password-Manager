@@ -1,6 +1,7 @@
 package PwdManager;
-import Encryption.StringCipher;
-import Encryption.CipherBuilder;
+import PwdManager.Encryption.StringCipher;
+import PwdManager.Encryption.CipherBuilder;
+import java.nio.file.*;
 
 public class Registration {
 	private static String user;
@@ -40,7 +41,7 @@ public class Registration {
 
 	private static void createFiles(byte[] salt, byte[] masterKey) throws Exception {
 		createSaltFile(salt);
-		createPasswordFile();
+		createPasswordDirectory();
 		createMasterKeyFile(masterKey);
 	}
 
@@ -50,9 +51,9 @@ public class Registration {
 		fileWriter.close();
 	}
 
-	private static void createPasswordFile() throws Exception {
-		EncodedFileWriter fileWriter = new EncodedFileWriter(user + "_pass");
-		fileWriter.close();
+	private static void createPasswordDirectory() throws Exception {
+		String directoryName = user + "_dir";
+		Files.createDirectory(Paths.get(directoryName));
 	}
 
 	private static void createMasterKeyFile(byte[] masterKey) throws Exception {

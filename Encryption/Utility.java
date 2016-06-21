@@ -1,4 +1,4 @@
-package Encryption;
+package PwdManager.Encryption;
 
 public class Utility {
 	public static byte[] concatByteArray(byte[] array1, byte[] array2) {

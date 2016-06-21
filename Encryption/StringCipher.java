@@ -1,4 +1,4 @@
-package Encryption;
+package PwdManager.Encryption;
 
 public interface StringCipher {
 	public byte[] tryEncrypt(String plaintext);
