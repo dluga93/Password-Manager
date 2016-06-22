@@ -7,6 +7,7 @@ a template given for an assignment in my Security course.
 // TODO: ask "are you sure" when removing entry
 // TODO: possibility to delete account
 // TODO: warning if a website the user wants to add already exists
+// TODO: password verification. check if password is correct.
 package PwdManager;
 
 import org.eclipse.swt.*;
@@ -211,6 +212,28 @@ public class GUI {
 						   new Transfer[]{textTransfer});
 		}
 	}
+
+	public static void changePassword() {
+		final Shell shell = createShell(new FillLayout());
+		shell.setText("Change Password");
+
+		final Text oldPass = new Text(shell, SWT.BORDER | SWT.PASSWORD);
+		final Text newPass  = new Text(shell, SWT.BORDER | SWT.PASSWORD);
+
+		Button change = new Button(shell, SWT.PUSH);
+		shell.setDefaultButton(change);
+		change.setText("Submit");
+		change.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event e) {
+				String oldPassword = oldPass.getText();
+				String newPassword = newPass.getText();
+				passwords.tryChangeMasterPassword(oldPassword, newPassword);
+				shell.dispose();
+			}
+		});
+
+		startShell(shell);
+	}
 	
 	public static void main(String[] args) {
 		
@@ -248,6 +271,12 @@ public class GUI {
 				new Listener () {
 					public void handleEvent (Event e) {
 						shell.dispose();
+				}});
+
+			addMenuPushItem(submenu, "&Change Master Password", SWT.NONE,
+				new Listener () {
+					public void handleEvent (Event e) {
+						changePassword();
 				}});
 		}
 
@@ -290,22 +319,6 @@ public class GUI {
 				}});
 		}
 
-/*		list.addListener(SWT.KeyDown, new Listener(){
-			public void handleEvent(Event e){
-				switch (e.character){
- 					case SWT.DEL:
- 					{
- 						areYouSure
- 						String[] keys = list.getSelection();
-						for (String key : keys) {
-							passwords.removeEntry(key);
-							list.remove(key);
-						}
- 						break;
- 					}
- 				}
- 			}});*/
-
 		for (String entry : passwords.getWebsites()) {
 			list.add(entry);
 		}
@@ -318,7 +331,6 @@ public class GUI {
 		list.setLayoutData(lay);
 		
 		/* go */
-		shell.setSize(200, 500);
 		startShell(shell);
 		
 		display.dispose ();

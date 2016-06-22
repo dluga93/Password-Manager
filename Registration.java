@@ -6,11 +6,20 @@ import java.nio.file.*;
 public class Registration {
 	private static String user;
 
-	public static void registerUser(String user_, String password) {
-		user = user_;
+	public static void registerUser(String usr, String password) {
+		user = usr;
 		byte[] salt = CipherBuilder.randomData(CipherBuilder.keySizeInBits/8);
 		byte[] masterKey = createEncryptedMasterKey(password, salt);
 		tryCreateFiles(salt, masterKey);
+	}
+
+	// register with a preset master key
+	public static void registerUser(String usr, String password, byte[] masterKey) {
+		user = usr;
+		byte[] salt = CipherBuilder.randomData(CipherBuilder.keySizeInBits/8);
+		StringCipher cipher = tryCreateCipher(password, salt);
+		byte[] encryptedKey = cipher.tryEncrypt(masterKey);
+		tryCreateFiles(salt, encryptedKey);
 	}
 
 	private static byte[] createEncryptedMasterKey(String password, byte[] salt) {
@@ -51,9 +60,14 @@ public class Registration {
 		fileWriter.close();
 	}
 
+	// TODO: BAD! Find a new way to change master password, not just register again
+	// with a new password and same master key.
 	private static void createPasswordDirectory() throws Exception {
 		String directoryName = user + "_dir";
-		Files.createDirectory(Paths.get(directoryName));
+		try {
+			Files.createDirectory(Paths.get(directoryName));
+		} catch (FileAlreadyExistsException e) {
+		}
 	}
 
 	private static void createMasterKeyFile(byte[] masterKey) throws Exception {

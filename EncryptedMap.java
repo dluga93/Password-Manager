@@ -17,14 +17,14 @@ public class EncryptedMap {
 	public EncryptedMap(String user, String password) {
 		this.user = user;
 		passwordMap = new HashMap<String, String>();
-		byte[] masterKey = tryGetMasterKey(user, password);
+		byte[] masterKey = tryGetMasterKey(password);
 		cipher = CipherBuilder.build(masterKey);
-		tryReadPasswords(user, cipher);
+		tryReadPasswords(cipher);
 	}
 
-	private byte[] tryGetMasterKey(String user, String password) {
+	private byte[] tryGetMasterKey(String password) {
 		try {
-			return getMasterKey(user, password);
+			return getMasterKey(password);
 		} catch (IOException e) {
 			Logger.logException("Problem reading master key.", e);
 			System.exit(1);
@@ -35,7 +35,7 @@ public class EncryptedMap {
 		return null;
 	}
 
-	private byte[] getMasterKey(String user, String password)
+	private byte[] getMasterKey(String password)
 	throws FileNotFoundException, IOException, Exception {
 		EncodedFileReader fileReader = new EncodedFileReader(user + "_key");
 		byte[] encryptedMasterKey = fileReader.readData();
@@ -46,9 +46,9 @@ public class EncryptedMap {
 		return masterKey;
 	}
 
-	private void tryReadPasswords(String user, StringCipher cipher) {
+	private void tryReadPasswords(StringCipher cipher) {
 		try {
-			readPasswords(user, cipher);
+			readPasswords(cipher);
 		} catch (FileNotFoundException e) {
 			Logger.logException("Can't find password directory/file.", e);
 			System.exit(1);
@@ -59,7 +59,7 @@ public class EncryptedMap {
 	}
 
 	// TODO: put each (website,password) pair in a separate file.
-	private void readPasswords(String user, StringCipher cipher)
+	private void readPasswords(StringCipher cipher)
 	throws FileNotFoundException, Exception {
 		ArrayList<String> filenames = getFilenames(user);
 
@@ -70,6 +70,11 @@ public class EncryptedMap {
 			fileReader.close();
 			passwordMap.put(website, password);
 		}
+	}
+
+	public void tryChangeMasterPassword(String oldPass, String newPass) {
+		byte[] masterKey = tryGetMasterKey(oldPass);
+		Registration.registerUser(user, newPass, masterKey);
 	}
 
 	private ArrayList<String> getFilenames(String user)
