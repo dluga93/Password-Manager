@@ -26,6 +26,7 @@ public class GUI {
 	private static final Shell shell = new Shell(display);
 	private static final List list = new List(shell, SWT.BORDER);
 	private static final Clipboard cb = new Clipboard(display);
+	private static boolean answeredYes = false;
 
 	public static Shell createShell(Layout layout) {
 		Shell shell = new Shell(display);
@@ -153,6 +154,48 @@ public class GUI {
 		}
 	}
 
+	public static void areYouSure(String title) {
+		answeredYes = false;
+
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 2;
+		layout.makeColumnsEqualWidth = true;
+		final Shell shell = createShell(layout);
+		shell.setText(title);
+
+		GridData gridData = new GridData();
+		gridData.horizontalAlignment = GridData.CENTER;
+		gridData.horizontalSpan = 2;
+
+		Label label = new Label(shell, SWT.CENTER);
+		label.setText("Are you sure?");
+		label.setLayoutData(gridData);
+
+		Button yes = new Button(shell, SWT.PUSH | SWT.CENTER);
+		yes.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		shell.setDefaultButton(yes);
+		yes.setText("Yes");
+		yes.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event e) {
+				answeredYes = true;
+				shell.dispose();
+			}
+		});
+
+		Button no = new Button(shell, SWT.PUSH | SWT.CENTER);
+		no.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		shell.setDefaultButton(no);
+		no.setText("No");
+		no.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event e) {
+				answeredYes = false;
+				shell.dispose();
+			}
+		});
+
+		startShell(shell);
+	}
+
 	public static void addMenuPushItem(Menu menu, String text,
 							int accelerator, Listener listener) {
 		MenuItem item = new MenuItem(menu, SWT.PUSH);
@@ -227,6 +270,9 @@ public class GUI {
 			addMenuPushItem(submenu, "&Delete\tDel", SWT.DEL,
 				new Listener () {
 					public void handleEvent (Event e) {
+						areYouSure("Delete Entry");
+						if (!answeredYes)
+							return;
 						String[] keys = list.getSelection();
 						for (String key : keys) {
 							passwords.removeEntry(key);
@@ -244,11 +290,12 @@ public class GUI {
 				}});
 		}
 
-		list.addListener(SWT.KeyDown, new Listener(){
- 			public void handleEvent(Event e){
- 				switch (e.character){
+/*		list.addListener(SWT.KeyDown, new Listener(){
+			public void handleEvent(Event e){
+				switch (e.character){
  					case SWT.DEL:
  					{
+ 						areYouSure
  						String[] keys = list.getSelection();
 						for (String key : keys) {
 							passwords.removeEntry(key);
@@ -257,7 +304,7 @@ public class GUI {
  						break;
  					}
  				}
- 			}});
+ 			}});*/
 
 		for (String entry : passwords.getWebsites()) {
 			list.add(entry);
