@@ -7,7 +7,6 @@ a template given for an assignment in my Security course.
 // TODO: ask "are you sure" when removing entry
 // TODO: possibility to delete account
 // TODO: warning if a website the user wants to add already exists
-// TODO: window titles. In change password, title is website.
 package PwdManager;
 
 import org.eclipse.swt.*;
@@ -45,6 +44,7 @@ public class GUI {
 
 	public static void welcomeScreen() {
 		final Shell shell = createShell(new FillLayout());
+		shell.setText("Password Manager");
 
 		Button login = new Button(shell, SWT.PUSH);
 		login.setText("Log In\n");
@@ -71,6 +71,7 @@ public class GUI {
 
 	public static void inputCredentials() {
 		final Shell shell = createShell(new FillLayout());
+		shell.setText("Input Credentials");
 
 		final Text tuser  = new Text(shell, SWT.BORDER);
 		final Text tpass  = new Text(shell, SWT.BORDER | SWT.PASSWORD);
@@ -94,6 +95,7 @@ public class GUI {
 		layout.numColumns = 2;
 		layout.makeColumnsEqualWidth = true;
 		final Shell shell = createShell(layout);
+		shell.setText("Edit Password");
 
 		final Label newPass = new Label(shell, SWT.LEFT);
 		newPass.setText("New password");
@@ -123,6 +125,7 @@ public class GUI {
 
 	public static void addPasswd() {
 		final Shell shell = createShell(new FillLayout());
+		shell.setText("Add Password");
 
 		final Text tsite  = new Text(shell, SWT.BORDER);
 		final Text tpass  = new Text(shell, SWT.BORDER | SWT.PASSWORD);
@@ -179,8 +182,8 @@ public class GUI {
 		}
 
 		/* set up SWT */
-		shell.setText ("Password Manager");
-		shell.setLayout (new FormLayout());
+		shell.setText("Password Manager");
+		shell.setLayout(new FormLayout());
 		
 		/* make the menu bar */
 		Menu bar = new Menu (shell, SWT.BAR);
