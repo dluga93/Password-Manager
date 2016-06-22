@@ -5,21 +5,19 @@ a template given for an assignment in my Security course.
 // TODO: don't allow any characters in website names, since they are used as filenames too.
 // TODO: edit password with enter key.
 // TODO: change master password
+// TODO: ask "are you sure" when removing entry
+// TODO: login/register button with enter key
 package PwdManager;
 
 import org.eclipse.swt.*;
 import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.layout.*;
-import org.eclipse.swt.graphics.Point;
-
-import java.util.Map;
 
 /**
  * The main client.
  */
 public class GUI {
-	private static String hack_string = null; /* HACK due to Java's poor closure support */
 	private static String password = null;
 	private static String user = null;
 	private static boolean triedLogIn = false;
@@ -196,6 +194,21 @@ public class GUI {
 						}
 				}});
 		}
+
+		list.addListener(SWT.KeyDown, new Listener(){
+ 			public void handleEvent(Event e){
+ 				switch (e.character){
+ 					case SWT.DEL:
+ 					{
+ 						String[] keys = list.getSelection();
+						for (String key : keys) {
+							passwords.removeEntry(key);
+							list.remove(key);
+						}
+ 						break;
+ 					}
+ 				}
+ 			}});
 
 		for (String entry : passwords.getWebsites()) {
 			list.add(entry);
