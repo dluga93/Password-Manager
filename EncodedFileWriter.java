@@ -7,7 +7,7 @@ public class EncodedFileWriter {
 	private FileOutputStream fileOutStream;
 
 	public EncodedFileWriter(String filename) throws FileNotFoundException {
-		fileOutStream = new FileOutputStream(filename, true);
+		fileOutStream = new FileOutputStream(filename);
 	}
 
 	public void close() throws IOException {
@@ -18,7 +18,7 @@ public class EncodedFileWriter {
 		try {
 			Files.delete(Paths.get(path));
 		} catch (IOException e) {
-			Logger.logError("Can't delete file.", e);
+			Logger.logException("Can't delete file.", e);
 		}
 	}
 

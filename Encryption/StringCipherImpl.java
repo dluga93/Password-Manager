@@ -26,7 +26,7 @@ class StringCipherImpl implements StringCipher {
 		try {
 			return ivAndEncrypt(plaintext);
 		} catch (Exception e) {
-			Logger.logError("Encountered problem with encryption algorithm.", e);
+			Logger.logException("Encountered problem with encryption algorithm.", e);
 			System.exit(1);
 		}
 		return null;
@@ -57,7 +57,7 @@ class StringCipherImpl implements StringCipher {
 												   encrypted.length);
 			return decrypt(iv, cipherText);
 		} catch (Exception e) {
-			Logger.logError("Encountered problem with decryption algorithm.", e);
+			Logger.logException("Encountered problem with decryption algorithm.", e);
 		}
 		return null;
 	}

@@ -24,7 +24,7 @@ public class Registration {
 		try {
 			return CipherBuilder.build(password, salt);
 		} catch (Exception e) {
-			Logger.logError("Error creating cipher for encryption.", e);
+			Logger.logException("Error creating cipher for encryption.", e);
 			System.exit(1);
 		}
 		return null;
@@ -34,7 +34,7 @@ public class Registration {
 		try {
 			createFiles(salt, masterKey);
 		} catch (Exception e) {
-			Logger.logError("Can't create files for signing up.", e);
+			Logger.logException("Can't create files for signing up.", e);
 			System.exit(1);
 		}
 	}

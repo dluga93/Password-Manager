@@ -3,10 +3,11 @@ A lot of this class, (the GUI functionality) is based on
 a template given for an assignment in my Security course.
 */
 // TODO: don't allow any characters in website names, since they are used as filenames too.
-// TODO: edit password with enter key.
 // TODO: change master password
 // TODO: ask "are you sure" when removing entry
-// TODO: login/register button with enter key
+// TODO: possibility to delete account
+// TODO: warning if a website the user wants to add already exists
+// TODO: window titles. In change password, title is website.
 package PwdManager;
 
 import org.eclipse.swt.*;
@@ -74,12 +75,45 @@ public class GUI {
 		final Text tuser  = new Text(shell, SWT.BORDER);
 		final Text tpass  = new Text(shell, SWT.BORDER | SWT.PASSWORD);
 
-		Button log = new Button(shell, SWT.PUSH);
-		log.setText("Submit");
-		log.addListener(SWT.Selection, new Listener() {
+		Button submit = new Button(shell, SWT.PUSH);
+		shell.setDefaultButton(submit);
+		submit.setText("Submit");
+		submit.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
 				password = tpass.getText();
 				user = tuser.getText();
+				shell.dispose();
+			}
+		});
+
+		startShell(shell);
+	}
+
+	public static void editPassword(String website) {
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 2;
+		layout.makeColumnsEqualWidth = true;
+		final Shell shell = createShell(layout);
+
+		final Label newPass = new Label(shell, SWT.LEFT);
+		newPass.setText("New password");
+		final Text newPassText = new Text(shell, SWT.BORDER | SWT.PASSWORD);
+		final Label confirmPass = new Label(shell, SWT.LEFT);
+		confirmPass.setText("Confirm password");
+		final Text confirmPassText  = new Text(shell, SWT.BORDER | SWT.PASSWORD);
+
+		Button submit = new Button(shell, SWT.PUSH);
+		shell.setDefaultButton(submit);
+		submit.setText("Submit");
+		submit.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event e) {
+				String password1 = newPassText.getText();
+				String password2 = confirmPassText.getText();
+				if (!password1.equals(password2)) {
+					Logger.logError("Passwords don't match.");
+					return;
+				}
+				tryAddPassword(website, password1);
 				shell.dispose();
 			}
 		});
@@ -93,24 +127,27 @@ public class GUI {
 		final Text tsite  = new Text(shell, SWT.BORDER);
 		final Text tpass  = new Text(shell, SWT.BORDER | SWT.PASSWORD);
 
-		Button log = new Button(shell, SWT.PUSH);
-		log.setText("Add");
-		log.addListener(SWT.Selection, new Listener() {
+		Button add = new Button(shell, SWT.PUSH);
+		shell.setDefaultButton(add);
+		add.setText("Add");
+		add.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
-				String website = tsite.getText();
-				String password = tpass.getText();
-				try {
-					passwords.addEntry(website, password);
-					list.add(website);
-				} catch (Exception exc) {
-					Logger.logError("Can't add new password. File corrupted.", exc);
-					System.exit(1);
-				}
+				tryAddPassword(tsite.getText(), tpass.getText());
 				shell.dispose();
 			}
 		});
 
 		startShell(shell);
+	}
+
+	public static void tryAddPassword(String website, String password) {
+		try {
+			passwords.addEntry(website, password);
+			list.add(website);
+		} catch (Exception exc) {
+			Logger.logException("Can't add new password. File corrupted.", exc);
+			System.exit(1);
+		}
 	}
 
 	public static void addMenuPushItem(Menu menu, String text,
@@ -191,6 +228,15 @@ public class GUI {
 						for (String key : keys) {
 							passwords.removeEntry(key);
 							list.remove(key);
+						}
+				}});
+
+			addMenuPushItem(submenu, "&Change\tEnter", SWT.LF,
+				new Listener () {
+					public void handleEvent (Event e) {
+						String[] keys = list.getSelection();
+						for (String key : keys) {
+							editPassword(key);
 						}
 				}});
 		}

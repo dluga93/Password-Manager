@@ -26,10 +26,10 @@ public class EncryptedMap {
 		try {
 			return getMasterKey(user, password);
 		} catch (IOException e) {
-			Logger.logError("Problem reading master key.", e);
+			Logger.logException("Problem reading master key.", e);
 			System.exit(1);
 		} catch (Exception e) {
-			Logger.logError("User does not exist.", e);
+			Logger.logException("User does not exist.", e);
 			System.exit(1);
 		}
 		return null;
@@ -50,10 +50,10 @@ public class EncryptedMap {
 		try {
 			readPasswords(user, cipher);
 		} catch (FileNotFoundException e) {
-			Logger.logError("Can't find password directory/file.", e);
+			Logger.logException("Can't find password directory/file.", e);
 			System.exit(1);
 		} catch (Exception e) {
-			Logger.logError("Problem reading password files.", e);
+			Logger.logException("Problem reading password files.", e);
 			System.exit(1);
 		}
 	}

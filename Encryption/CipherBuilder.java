@@ -24,7 +24,7 @@ public class CipherBuilder {
 			SecretKey secretKey = keyFromPasswordAndSalt(password, salt);
 			return new StringCipherImpl(cipher, secretKey);
 		} catch (Exception e) {
-			Logger.logError("User does not exist.", e);
+			Logger.logException("User does not exist.", e);
 			System.exit(1);
 		}
 		return null;
@@ -36,7 +36,7 @@ public class CipherBuilder {
 			SecretKey secretKey = keyFromPasswordAndSalt(password, salt);
 			return new StringCipherImpl(cipher, secretKey);
 		} catch (Exception e) {
-			Logger.logError("Couldn't create master key.", e);
+			Logger.logException("Couldn't create master key.", e);
 			System.exit(1);
 		}
 		return null;
@@ -46,7 +46,7 @@ public class CipherBuilder {
 		try {
 			return Cipher.getInstance(cipherInitString);
 		} catch (Exception e) {
-			Logger.logError("Unknown options for encryption algorithm.", e);
+			Logger.logException("Unknown options for encryption algorithm.", e);
 			System.exit(1);
 		}
 		return null;
@@ -75,7 +75,7 @@ public class CipherBuilder {
 			keyGenerator.init(CipherBuilder.keySizeInBits);
 			return keyGenerator.generateKey().getEncoded();
 		} catch (NoSuchAlgorithmException e) {
-			Logger.logError("Unknown algorithm for key generation.", e);
+			Logger.logException("Unknown algorithm for key generation.", e);
 			System.exit(1);
 			return null;
 		}
