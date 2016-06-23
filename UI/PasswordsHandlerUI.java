@@ -43,8 +43,8 @@ public class PasswordsHandlerUI {
 	private void tryAddPassword(String website, String password) {
 		try {
 			passwords.addEntry(website, password);
-		} catch (Exception exc) {
-			Logger.logException("Can't add new password. File corrupted.", exc);
+		} catch (Exception e) {
+			Logger.logException("Can't add new password. File corrupted.", e);
 			System.exit(1);
 		}
 	}
