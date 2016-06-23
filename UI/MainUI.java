@@ -55,7 +55,7 @@ public class MainUI {
 		addMenuPushItem(submenu, "&Change Master Password", SWT.NONE,
 			new Listener () {
 				public void handleEvent (Event e) {
-					passwordHandler.changePassword();
+					passwordHandler.changeMasterPassword();
 			}});
 
 		addMenuPushItem(submenu, "&Quit\tCtrl+Q", SWT.MOD1 + 'Q',
@@ -98,7 +98,7 @@ public class MainUI {
 				public void handleEvent (Event e) {
 					String[] keys = list.getSelection();
 					for (String key : keys) {
-						passwordHandler.editPassword(key);
+						passwordHandler.editEntry(key);
 					}
 			}});
 	}

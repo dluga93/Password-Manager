@@ -6,6 +6,7 @@ import PwdManager.Logger;
 import org.eclipse.swt.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.layout.*;
+import java.util.regex.Pattern;
 
 public class PasswordsHandlerUI {
 	private EncryptedMap passwords;
@@ -42,14 +43,22 @@ public class PasswordsHandlerUI {
 
 	private void tryAddPassword(String website, String password) {
 		try {
+			isValid(website);
 			passwords.addEntry(website, password);
 		} catch (Exception e) {
-			Logger.logException("Can't add new password. File corrupted.", e);
+			Logger.logException("Can't add new entry.", e);
 			System.exit(1);
 		}
 	}
 
-	public void editPassword(String website) {
+	private void isValid(String website) throws Exception {
+		Pattern websitePattern = Pattern.compile("[a-zA-Z0-9_.-]+");
+		boolean match = websitePattern.matcher(website).matches();
+		if (!match)
+			throw new Exception("Invalid characters in website.");
+	}
+
+	public void editEntry(String website) {
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		layout.makeColumnsEqualWidth = true;
@@ -82,7 +91,7 @@ public class PasswordsHandlerUI {
 		UIUtility.startShell(shell);
 	}
 
-	public void changePassword() {
+	public void changeMasterPassword() {
 		final Shell shell = UIUtility.createShell(new FillLayout());
 		shell.setText("Change Password");
 

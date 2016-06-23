@@ -8,7 +8,6 @@ import java.io.*;
 import java.util.*;
 import PwdManager.Encryption.StringCipher;
 import PwdManager.Encryption.CipherBuilder;
-import java.util.regex.Pattern;
 
 public class EncryptedMap {
 	private StringCipher cipher;
@@ -90,8 +89,7 @@ public class EncryptedMap {
 	}
 
 	public void addEntry(String website, String password)
-	throws FileNotFoundException, IOException, Exception {
-		isValid(website);
+	throws FileNotFoundException, IOException {
 		byte[] encryptedWebsite = cipher.tryEncrypt(website);
 		byte[] encryptedPassword = cipher.tryEncrypt(password);
 		String pathname = user + "_dir" + File.separator + user + "_" + website;
@@ -101,13 +99,6 @@ public class EncryptedMap {
 		fileWriter.writeData(encryptedPassword);
 		fileWriter.close();
 		passwordMap.put(website, password);
-	}
-
-	private void isValid(String website) throws Exception {
-		Pattern websitePattern = Pattern.compile("[a-zA-Z0-9_.-]+");
-		boolean match = websitePattern.matcher(website).matches();
-		if (!match)
-			throw new Exception("Invalid characters in website.");
 	}
 
 	public void removeEntry(String website) {
