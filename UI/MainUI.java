@@ -13,6 +13,10 @@ public class MainUI {
 
 	public MainUI() {
 		EncryptedMap passwords = AuthenticationUI.start();
+		if (passwords == null) {
+			passwordHandler = null;
+			return;
+		}
 		passwordHandler = new PasswordsHandlerUI(passwords);
 		passwordHandler.initializeList(list);
 
@@ -63,6 +67,12 @@ public class MainUI {
 				public void handleEvent (Event e) {
 					shell.dispose();
 			}});
+
+		addMenuPushItem(submenu, "&Delete Account", SWT.NONE,
+			new Listener () {
+				public void handleEvent (Event e) {
+					tryDeleteAccount();
+			}});
 	}
 
 	private void makeEditMenu(Menu bar) {
@@ -88,8 +98,9 @@ public class MainUI {
 						return;
 					String[] keys = list.getSelection();
 					for (String key : keys) {
-						passwordHandler.deletePassword(key);
-						list.remove(key);
+						boolean success = tryDeleteEntry(key);
+						if (success)
+							list.remove(key);
 					}
 			}});
 
@@ -109,5 +120,25 @@ public class MainUI {
 		item.setText(text);
 		item.setAccelerator(accelerator);
 		item.addListener(SWT.Selection, listener);
+	}
+
+	private boolean tryDeleteAccount() {
+		try {
+			passwordHandler.deleteAccount();
+			return true;
+		} catch (Exception e) {
+			UIUtility.errorMessage("Deleting Account", e.getMessage());
+			return false;
+		}
+	}
+
+	private boolean tryDeleteEntry(String key) {
+		try {
+			passwordHandler.deletePassword(key);
+			return true;
+		} catch (Exception e) {
+			UIUtility.errorMessage("Deleting Password", e.getMessage());
+			return false;
+		}
 	}
 }

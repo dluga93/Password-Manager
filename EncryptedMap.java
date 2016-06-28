@@ -14,7 +14,7 @@ public class EncryptedMap {
 	private HashMap<String, String> passwordMap;
 	private final String user;
 
-	public EncryptedMap(String user, String password) {
+	public EncryptedMap(String user, String password) throws Exception {
 		this.user = user;
 		passwordMap = new HashMap<String, String>();
 		byte[] masterKey = tryGetMasterKey(password);
@@ -22,17 +22,14 @@ public class EncryptedMap {
 		tryReadPasswords(cipher);
 	}
 
-	private byte[] tryGetMasterKey(String password) {
+	private byte[] tryGetMasterKey(String password) throws Exception {
 		try {
 			return getMasterKey(password);
 		} catch (IOException e) {
-			Logger.logException("Problem reading master key.", e);
-			System.exit(1);
+			throw new Exception("Problem reading master key.", e);
 		} catch (Exception e) {
-			Logger.logException("User does not exist.", e);
-			System.exit(1);
+			throw new Exception("User does not exist.", e);
 		}
-		return null;
 	}
 
 	private byte[] getMasterKey(String password)
@@ -46,21 +43,18 @@ public class EncryptedMap {
 		return masterKey;
 	}
 
-	private void tryReadPasswords(StringCipher cipher) {
+	private void tryReadPasswords(StringCipher cipher) throws Exception {
 		try {
 			readPasswords(cipher);
 		} catch (FileNotFoundException e) {
-			Logger.logException("Can't find password directory/file.", e);
-			System.exit(1);
-		} catch (Exception e) {
-			Logger.logException("Problem reading password files.", e);
-			System.exit(1);
+			throw new Exception("Can't find password directory/file.", e);
+		} catch (IOException e) {	// also handles EOFException
+			throw new Exception("Problem reading password files.", e);
 		}
 	}
 
-	// TODO: put each (website,password) pair in a separate file.
 	private void readPasswords(StringCipher cipher)
-	throws FileNotFoundException, Exception {
+	throws FileNotFoundException, IOException, EOFException, Exception {
 		ArrayList<String> filenames = getFilenames(user);
 
 		for (String filename : filenames) {
@@ -72,14 +66,18 @@ public class EncryptedMap {
 		}
 	}
 
-	public void tryChangeMasterPassword(String oldPass, String newPass) {
+	public void tryChangeMasterPassword(String oldPass, String newPass) throws Exception {
 		byte[] masterKey = tryGetMasterKey(oldPass);
 		Registration.registerUser(user, newPass, masterKey);
 	}
 
 	private ArrayList<String> getFilenames(String user)
-	throws FileNotFoundException, Exception {
-		File[] passwordFiles = new File(user + "_dir").listFiles();
+	throws Exception {
+		File directory = new File(user + "_dir");
+		if (!directory.exists())
+			throw new Exception("Password directory not found.");
+
+		File[] passwordFiles = directory.listFiles();
 		ArrayList<String> filenames = new ArrayList<String>();
 		for (File file : passwordFiles) {
 			String filename = user + "_dir" + File.separator + file.getName();
@@ -101,7 +99,7 @@ public class EncryptedMap {
 		passwordMap.put(website, password);
 	}
 
-	public void removeEntry(String website) {
+	public void removeEntry(String website) throws Exception {
 		String pathname = user + "_dir" + File.separator + user + "_" + website;
 		EncodedFileWriter.deleteFile(pathname);
 		passwordMap.remove(website);
@@ -113,5 +111,9 @@ public class EncryptedMap {
 
 	public String getWebsitePassword(String website) {
 		return passwordMap.get(website);
+	}
+
+	public void deleteAccount() throws Exception {
+		EncodedFileWriter.deleteFile(user + "_dir");
 	}
 }

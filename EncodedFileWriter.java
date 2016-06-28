@@ -14,14 +14,6 @@ public class EncodedFileWriter {
 		fileOutStream.close();
 	}
 
-	public static void deleteFile(String path) {
-		try {
-			Files.delete(Paths.get(path));
-		} catch (IOException e) {
-			Logger.logException("Can't delete file.", e);
-		}
-	}
-
 	public void writeData(byte[] data) throws IOException {
 		byte[] encoded = encodeBytes(data);
 		fileOutStream.write(encoded);
@@ -52,5 +44,23 @@ public class EncodedFileWriter {
 		System.arraycopy(bytes, 0, encodedBytes, 4, length);
 
 		return encodedBytes;
+	}
+
+	public static void deleteFile(String pathname) throws Exception {
+		File f = new File(pathname);
+		if (f.isDirectory()) {
+			File[] files = new File(pathname).listFiles();
+
+			for (File file : files) {
+				String newPathname = pathname + File.separator + file.getName();
+				deleteFile(newPathname);
+			}
+		}
+
+		try {
+			Files.delete(Paths.get(pathname));
+		} catch (IOException e) {
+			throw new Exception("Couldn't delete file " + pathname + ". Ignoring.", e);
+		}
 	}
 }

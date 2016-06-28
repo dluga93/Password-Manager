@@ -5,7 +5,7 @@ import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.layout.*;
 
-public class UIUtility {
+class UIUtility {
 	private static boolean answeredYes = false;
 	private static final Clipboard cb = new Clipboard(MainUI.display);
 
@@ -73,5 +73,13 @@ public class UIUtility {
 
 		startShell(shell);
 		return answeredYes;
+	}
+
+	public static int errorMessage(String title, String message) {
+		final Shell shell = UIUtility.createShell(new FillLayout());
+		shell.setText(title);
+		MessageBox errorBox = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK);
+		errorBox.setMessage(message);
+		return errorBox.open();
 	}
 }

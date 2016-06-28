@@ -7,6 +7,7 @@ import org.eclipse.swt.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.layout.*;
 import java.util.regex.Pattern;
+import java.io.*;
 
 public class PasswordsHandlerUI {
 	private EncryptedMap passwords;
@@ -32,22 +33,29 @@ public class PasswordsHandlerUI {
 		add.setText("Add");
 		add.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
-				tryAddPassword(tsite.getText(), tpass.getText());
-				list.add(tsite.getText());
-				shell.dispose();
+				boolean success = tryAddPassword(tsite.getText(), tpass.getText());
+				if (success) {
+					list.add(tsite.getText());
+					shell.dispose();
+				}
 			}
 		});
 
 		UIUtility.startShell(shell);
 	}
 
-	private void tryAddPassword(String website, String password) {
+	private boolean tryAddPassword(String website, String password) {
 		try {
 			isValid(website);
 			passwords.addEntry(website, password);
-		} catch (Exception e) {
+			return true;
+		} catch (IOException e) {
 			Logger.logException("Can't add new entry.", e);
 			System.exit(1);
+			return false;
+		} catch (Exception e) {
+			UIUtility.errorMessage("Adding/Changing Entry", e.getMessage());
+			return false;
 		}
 	}
 
@@ -83,8 +91,9 @@ public class PasswordsHandlerUI {
 					Logger.logError("Passwords don't match.");
 					return;
 				}
-				tryAddPassword(website, password1);
-				shell.dispose();
+				boolean success = tryAddPassword(website, password1);
+				if (success)
+					shell.dispose();
 			}
 		});
 
@@ -105,19 +114,34 @@ public class PasswordsHandlerUI {
 			public void handleEvent(Event e) {
 				String oldPassword = oldPass.getText();
 				String newPassword = newPass.getText();
-				passwords.tryChangeMasterPassword(oldPassword, newPassword);
-				shell.dispose();
+				boolean success = tryChangeMasterPassword(oldPassword, newPassword);
+				if (success)
+					shell.dispose();
 			}
 		});
 
 		UIUtility.startShell(shell);
 	}
 
+	private boolean tryChangeMasterPassword(String oldPassword, String newPassword) {
+		try {
+			passwords.tryChangeMasterPassword(oldPassword, newPassword);
+			return true;
+		} catch (Exception e) {
+			UIUtility.errorMessage("Password Change Error", e.getMessage());
+			return false;
+		}
+	}
+
 	public String getPassword(String website) {
 		return passwords.getWebsitePassword(website);
 	}
 
-	public void deletePassword(String website) {
+	public void deletePassword(String website) throws Exception {
 		passwords.removeEntry(website);
+	}
+
+	public void deleteAccount() throws Exception {
+		passwords.deleteAccount();
 	}
 }

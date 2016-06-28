@@ -23,48 +23,45 @@ class StringCipherImpl implements StringCipher {
 
 	// also prepends IV
 	public byte[] tryEncrypt(byte[] plaintext) {
+		return ivAndEncrypt(plaintext);
+	}
+
+	private byte[] ivAndEncrypt(byte[] plaintext) {
 		try {
-			return ivAndEncrypt(plaintext);
+			byte[] ivBytes = CipherBuilder.randomData(CipherBuilder.keySizeInBits/8);
+			IvParameterSpec iv = new IvParameterSpec(ivBytes);
+			cipher.init(Cipher.ENCRYPT_MODE, secretKey, iv);
+			
+			byte[] encrypted = cipher.doFinal(plaintext);
+			byte[] ivAndEncrypted = Utility.concatByteArray(ivBytes, encrypted);
+			return ivAndEncrypted;
 		} catch (Exception e) {
-			Logger.logException("Encountered problem with encryption algorithm.", e);
+			Logger.logException("Problem with encryption algorithm.", e);
 			System.exit(1);
+			return null;
 		}
-		return null;
 	}
 
-	private byte[] ivAndEncrypt(byte[] plaintext)
-	throws InvalidKeyException, IllegalBlockSizeException,
-	InvalidAlgorithmParameterException, BadPaddingException {
-		byte[] ivBytes = CipherBuilder.randomData(CipherBuilder.keySizeInBits/8);
-		IvParameterSpec iv = new IvParameterSpec(ivBytes);
-		cipher.init(Cipher.ENCRYPT_MODE, secretKey, iv);
-		
-		byte[] encrypted = cipher.doFinal(plaintext);
-		byte[] ivAndEncrypted = Utility.concatByteArray(ivBytes, encrypted);
-		return ivAndEncrypted;
-	}
-
-	public String tryDecryptString(byte[] encrypted) {
+	public String tryDecryptString(byte[] encrypted) throws Exception {
 		byte[] decrypted = tryDecrypt(encrypted);
 		return new String(decrypted, StandardCharsets.UTF_8);
 	}
 
-	public byte[] tryDecrypt(byte[] encrypted) {
+	public byte[] tryDecrypt(byte[] encrypted) throws Exception {
+		byte[] iv = Arrays.copyOfRange(encrypted,0,CipherBuilder.keySizeInBits/8);
+		byte[] cipherText = Arrays.copyOfRange(encrypted,
+											   CipherBuilder.keySizeInBits/8,
+											   encrypted.length);
 		try {
-			byte[] iv = Arrays.copyOfRange(encrypted,0,CipherBuilder.keySizeInBits/8);
-			byte[] cipherText = Arrays.copyOfRange(encrypted,
-												   CipherBuilder.keySizeInBits/8,
-												   encrypted.length);
 			return decrypt(iv, cipherText);
 		} catch (Exception e) {
-			Logger.logException("Encountered problem with decryption algorithm.", e);
+			throw new Exception("Problem decrypting string.", e);
 		}
-		return null;
 	}
 
 	private byte[] decrypt(byte[] iv, byte[] ciphertext)
-	throws InvalidKeyException, IllegalBlockSizeException,
-	InvalidAlgorithmParameterException, BadPaddingException {
+	throws InvalidAlgorithmParameterException, InvalidKeyException,
+	IllegalBlockSizeException, BadPaddingException {
 		IvParameterSpec IV = new IvParameterSpec(iv);
 		cipher.init(Cipher.DECRYPT_MODE, secretKey, IV);
 		byte[] decryptedBytes = cipher.doFinal(ciphertext);

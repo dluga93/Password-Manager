@@ -5,6 +5,7 @@ import PwdManager.EncodedFileReader;
 import javax.crypto.*;
 import javax.crypto.spec.*;
 import java.security.*;
+import java.io.*;
 
 public class CipherBuilder {
 	private static final String cipherInitString = "AES/CBC/PKCS5Padding";
@@ -17,29 +18,17 @@ public class CipherBuilder {
 		return new StringCipherImpl(cipher, secretKey);
 	}
 
-	public static StringCipher build(String user, String password) {
-		try {
-			Cipher cipher = createCipher();
-			byte[] salt = readSaltFromFile(user);
-			SecretKey secretKey = keyFromPasswordAndSalt(password, salt);
-			return new StringCipherImpl(cipher, secretKey);
-		} catch (Exception e) {
-			Logger.logException("User does not exist.", e);
-			System.exit(1);
-		}
-		return null;
+	public static StringCipher build(String user, String password) throws Exception {
+		Cipher cipher = createCipher();
+		byte[] salt = readSaltFromFile(user);
+		SecretKey secretKey = keyFromPasswordAndSalt(password, salt);
+		return new StringCipherImpl(cipher, secretKey);
 	}
 
 	public static StringCipher build(String password, byte[] salt) {
-		try {
-			Cipher cipher = createCipher();
-			SecretKey secretKey = keyFromPasswordAndSalt(password, salt);
-			return new StringCipherImpl(cipher, secretKey);
-		} catch (Exception e) {
-			Logger.logException("Couldn't create master key.", e);
-			System.exit(1);
-		}
-		return null;
+		Cipher cipher = createCipher();
+		SecretKey secretKey = keyFromPasswordAndSalt(password, salt);
+		return new StringCipherImpl(cipher, secretKey);
 	}
 
 	private static Cipher createCipher() {
@@ -52,21 +41,31 @@ public class CipherBuilder {
 		return null;
 	}
 
-	private static byte[] readSaltFromFile(String user)
-	throws Exception {
-		EncodedFileReader fileReader = new EncodedFileReader(user + "_salt");
-		byte[] salt = fileReader.readData();
-		fileReader.close();
-		return salt;
+	private static byte[] readSaltFromFile(String user) throws Exception {
+		try {
+			EncodedFileReader fileReader = new EncodedFileReader(user + "_salt");
+			byte[] salt = fileReader.readData();
+			fileReader.close();
+			return salt;
+		} catch (FileNotFoundException e) {
+			throw new Exception("Can't find salt file.");
+		} catch (Exception e) {
+			throw new Exception("Problem reading salt file.", e);
+		}
 	}
 
-	private static SecretKey keyFromPasswordAndSalt(String password, byte[] salt)
-	throws Exception {
-		char[] chars = password.toCharArray();
-		PBEKeySpec spec = new PBEKeySpec(chars, salt, pbeIterations, keySizeInBits);
-		SecretKeyFactory skf = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
-		byte[] secretKeyBytes = skf.generateSecret(spec).getEncoded();
-		return new SecretKeySpec(secretKeyBytes, 0, secretKeyBytes.length, "AES");
+	private static SecretKey keyFromPasswordAndSalt(String password, byte[] salt) {
+		try {
+			char[] chars = password.toCharArray();
+			PBEKeySpec spec = new PBEKeySpec(chars, salt, pbeIterations, keySizeInBits);
+			SecretKeyFactory skf = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
+			byte[] secretKeyBytes = skf.generateSecret(spec).getEncoded();
+			return new SecretKeySpec(secretKeyBytes, 0, secretKeyBytes.length, "AES");
+		} catch (Exception e) {
+			Logger.logException("Problem with creating master key from password and salt.", e);
+			System.exit(1);
+			return null;
+		}
 	}
 
 	public static byte[] generateKey() {

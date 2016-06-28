@@ -19,9 +19,10 @@ public class AuthenticationUI {
 		login.setText("Log In\n");
 		login.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
-				shell.dispose();
 				inputCredentialsDialog();
-				passwords = new EncryptedMap(user, password);
+				boolean success = tryLogin(user, password);
+				if (success)
+					shell.dispose();
 			}
 		});
 
@@ -29,10 +30,12 @@ public class AuthenticationUI {
 		register.setText("Register");
 		register.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
-				shell.dispose();
 				inputCredentialsDialog();
-				Registration.registerUser(user, password);
-				passwords = new EncryptedMap(user, password);
+				boolean success = tryRegister(user, password);
+				if (success)
+					success = tryLogin(user, password);
+				if (success)
+					shell.dispose();
 			}
 		});
 
@@ -59,5 +62,25 @@ public class AuthenticationUI {
 		});
 
 		UIUtility.startShell(shell);
+	}
+
+	private static boolean tryLogin(String user, String password) {
+		try {
+			passwords = new EncryptedMap(user, password);
+			return true;
+		} catch (Exception e) {
+			UIUtility.errorMessage("Authentication Error", e.getMessage());
+			return false;
+		}
+	}
+
+	private static boolean tryRegister(String user, String password) {
+		try {
+			Registration.registerUser(user, password);
+			return true;
+		} catch (Exception e) {
+			UIUtility.errorMessage("Registration Error", e.getMessage());
+			return false;
+		}
 	}
 }
