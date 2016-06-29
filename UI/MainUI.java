@@ -1,5 +1,6 @@
 package PwdManager.UI;
 
+// TODO: File isn't a good name for the submenu
 import PwdManager.EncryptedMap;
 import org.eclipse.swt.*;
 import org.eclipse.swt.widgets.*;
@@ -94,7 +95,7 @@ public class MainUI {
 		addMenuPushItem(submenu, "&Delete\tDel", SWT.DEL,
 			new Listener () {
 				public void handleEvent (Event e) {
-					if (!UIUtility.areYouSure("Delete Entry"))
+					if (!UIUtility.yesNoQuestion("Delete Entry", "Are you sure?"))
 						return;
 					String[] keys = list.getSelection();
 					for (String key : keys) {

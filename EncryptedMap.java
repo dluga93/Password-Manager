@@ -1,6 +1,5 @@
 // TODO: correct message for wrong password
 // TODO: integrity checking for the saved files.
-// TODO: dialog boxes and no abortion for exceptions.
 
 package PwdManager;
 

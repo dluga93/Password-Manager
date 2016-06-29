@@ -6,8 +6,8 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.layout.*;
 
 class UIUtility {
-	private static boolean answeredYes = false;
 	private static final Clipboard cb = new Clipboard(MainUI.display);
+	public static boolean answeredYes = false;
 
 	public static Shell createShell(Layout layout) {
 		Shell shell = new Shell(MainUI.display);
@@ -32,7 +32,7 @@ class UIUtility {
 		}
 	}
 
-	public static boolean areYouSure(String title) {
+	public static boolean yesNoQuestion(String title, String question) {
 		answeredYes = false;
 
 		GridLayout layout = new GridLayout();
@@ -46,7 +46,7 @@ class UIUtility {
 		gridData.horizontalSpan = 2;
 
 		Label label = new Label(shell, SWT.CENTER);
-		label.setText("Are you sure?");
+		label.setText(question);
 		label.setLayoutData(gridData);
 
 		Button yes = new Button(shell, SWT.PUSH | SWT.CENTER);

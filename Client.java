@@ -2,8 +2,6 @@
 Parts of the GUI code is based on a template given for an
 assignment in my Security course.
 */
-// TODO: possibility to delete account
-// TODO: warning if a website the user wants to add already exists
 // TODO: password verification. check if password is correct.
 package PwdManager;
 import PwdManager.UI.MainUI;

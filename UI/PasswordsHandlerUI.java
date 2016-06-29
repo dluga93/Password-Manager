@@ -33,9 +33,18 @@ public class PasswordsHandlerUI {
 		add.setText("Add");
 		add.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
+				if (list.indexOf(tsite.getText()) != -1) {
+					String question = tsite.getText() + " already exists. Replace?";
+					UIUtility.yesNoQuestion("Replace password", question);
+					if (!UIUtility.answeredYes) {
+						shell.dispose();
+						return;
+					}
+				}
 				boolean success = tryAddPassword(tsite.getText(), tpass.getText());
 				if (success) {
-					list.add(tsite.getText());
+					if (list.indexOf(tsite.getText()) == -1)
+						list.add(tsite.getText());
 					shell.dispose();
 				}
 			}
