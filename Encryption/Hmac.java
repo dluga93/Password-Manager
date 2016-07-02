@@ -7,16 +7,16 @@ import PwdManager.Logger;
 public class Hmac {
 	private final byte[] key;
 	private final static String HMAC_ALGORITHM = "HmacSHA1";
-	private final static int keySizeInBits = 128;
+	public final static int KEY_SIZE_IN_BITS = 128;
 
 	public Hmac(byte[] key) throws Exception {
-		if (key.length != keySizeInBits/8)
-			throw new Exception("Wrong Key Size. " + keySizeInBits + " bits expected.");
+		if (key.length != KEY_SIZE_IN_BITS/8)
+			throw new Exception("Wrong Key Size. " + KEY_SIZE_IN_BITS + " bits expected.");
 
 		this.key = key;
 	}
 
-	public byte[] getmac(byte[] message) {
+	public byte[] getMac(byte[] message) {
 		try {
 			Mac hmac = Mac.getInstance(HMAC_ALGORITHM);
 			hmac.init(new SecretKeySpec(key, HMAC_ALGORITHM));
@@ -26,5 +26,10 @@ public class Hmac {
 			System.exit(1);
 			return null;
 		}
+	}
+
+	public byte[] mac(byte[] message) {
+		byte[] mac = getMac(message);
+		return Utility.concatByteArray(message, mac);
 	}
 }
