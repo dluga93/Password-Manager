@@ -10,10 +10,18 @@ import java.util.*;
 class StringCipherImpl implements StringCipher {
 	private final Cipher cipher;
 	private final SecretKey secretKey;
+	private final Hmac hmac;
 
 	public StringCipherImpl(Cipher cipher, SecretKey secretKey) {
 		this.cipher = cipher;
 		this.secretKey = secretKey;
+		this.hmac = null;
+	}
+
+	public StringCipherImpl(Cipher cipher, SecretKey secretKey, Hmac hmac) {
+		this.cipher = cipher;
+		this.secretKey = secretKey;
+		this.hmac = hmac;
 	}
 
 	// also prepends IV
