@@ -2,6 +2,7 @@ package PwdManager.Encryption;
 
 import javax.crypto.*;
 import javax.crypto.spec.*;
+import java.util.*;
 import PwdManager.Logger;
 
 public class Hmac {
@@ -39,10 +40,10 @@ public class Hmac {
 			throw new Exception("Corrupted data. Invalid length.");
 
 		byte[] message = new byte[maccedMessage.length - HASH_SIZE_IN_BYTES];
-		System.arrayCopy(maccedMessage, 0, message, 0, message.length);
+		System.arraycopy(maccedMessage, 0, message, 0, message.length);
 
 		byte[] mac = new byte[HASH_SIZE_IN_BYTES];
-		System.arrayCopy(maccedMessage, message.length, mac, 0, mac.length);
+		System.arraycopy(maccedMessage, message.length, mac, 0, mac.length);
 
 		if (!isMacCorrect(message, mac))
 			throw new Exception("Corrupted data. Incorrect MAC.");
