@@ -81,18 +81,6 @@ public class CipherBuilder {
 		}
 	}
 
-	public static byte[] generateKey() {
-		try {
-			KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
-			keyGenerator.init(CipherBuilder.keySizeInBits);
-			return keyGenerator.generateKey().getEncoded();
-		} catch (NoSuchAlgorithmException e) {
-			Logger.logException("Unknown algorithm for key generation.", e);
-			System.exit(1);
-			return null;
-		}
-	}
-
 	public static byte[] generateKey(KeyTypes keyType) {
 		try {
 			KeyGenerator keyGenerator = KeyGenerator.getInstance(keyType.getType());

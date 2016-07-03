@@ -26,7 +26,7 @@ public class Registration {
 	}
 
 	private static byte[] createEncryptedMasterKey(String password, byte[] salt) {
-		byte[] key = CipherBuilder.generateKey();
+		byte[] key = CipherBuilder.generateKey(CipherBuilder.KeyTypes.AES);
 		StringCipher cipher = tryCreateCipher(password, salt);
 		byte[] encryptedKey = cipher.tryEncrypt(key);
 		return encryptedKey;
