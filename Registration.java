@@ -58,10 +58,10 @@ public class Registration {
 	}
 
 	private static void createFiles(byte[] salt) throws FileAlreadyExistsException, Exception {
+		createPasswordDirectory();
 		saveDataToFile(salt, Naming.saltFilename(user));
 		saveDataToFile(encryptedMasterKey, Naming.masterKeyFilename(user));
 		saveDataToFile(encryptedMacKey, Naming.macKeyFilename(user));
-		createPasswordDirectory();
 	}
 
 	private static void saveDataToFile(byte[] data, String filename) throws Exception {
