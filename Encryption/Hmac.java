@@ -7,6 +7,7 @@ import PwdManager.Logger;
 public class Hmac {
 	private final byte[] key;
 	private final static String HMAC_ALGORITHM = "HmacSHA1";
+	private final static int HASH_SIZE_IN_BYTES = 20;
 	public final static int KEY_SIZE_IN_BITS = 128;
 
 	public Hmac(byte[] key) throws Exception {
@@ -31,5 +32,28 @@ public class Hmac {
 	public byte[] mac(byte[] message) {
 		byte[] mac = getMac(message);
 		return Utility.concatByteArray(message, mac);
+	}
+
+	public byte[] unmac(byte[] maccedMessage) throws Exception {
+		if (maccedMessage.length <= HASH_SIZE_IN_BYTES)
+			throw new Exception("Corrupted data. Invalid length.");
+
+		byte[] message = new byte[maccedMessage.length - HASH_SIZE_IN_BYTES];
+		System.arrayCopy(maccedMessage, 0, message, 0, message.length);
+
+		byte[] mac = new byte[HASH_SIZE_IN_BYTES];
+		System.arrayCopy(maccedMessage, message.length, mac, 0, mac.length);
+
+		if (!isMacCorrect(message, mac))
+			throw new Exception("Corrupted data. Incorrect MAC.");
+
+		return message;
+	}
+
+	private boolean isMacCorrect(byte[] message, byte[] actualMac) {
+		byte[] exptectedMac = getMac(message);
+		if (Arrays.equals(exptectedMac, actualMac))
+			return true;
+		return false;
 	}
 }
