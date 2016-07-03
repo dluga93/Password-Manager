@@ -10,6 +10,7 @@ public class AuthenticationUI {
 	private static String user;
 	private static String password;
 	private static EncryptedMap passwords;
+	private static boolean credentialsGiven;
 
 	public static EncryptedMap start() {
 		final Shell shell = UIUtility.createShell(new FillLayout());
@@ -20,6 +21,8 @@ public class AuthenticationUI {
 		login.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
 				inputCredentialsDialog();
+				if (!credentialsGiven)
+					return;
 				boolean success = tryLogin(user, password);
 				if (success)
 					shell.dispose();
@@ -31,6 +34,8 @@ public class AuthenticationUI {
 		register.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
 				inputCredentialsDialog();
+				if (!credentialsGiven)
+					return;
 				boolean success = tryRegister(user, password);
 				if (success)
 					success = tryLogin(user, password);
@@ -49,6 +54,7 @@ public class AuthenticationUI {
 
 		final Text tuser  = new Text(shell, SWT.BORDER);
 		final Text tpass  = new Text(shell, SWT.BORDER | SWT.PASSWORD);
+		credentialsGiven = false;
 
 		Button submit = new Button(shell, SWT.PUSH);
 		shell.setDefaultButton(submit);
@@ -57,6 +63,7 @@ public class AuthenticationUI {
 			public void handleEvent(Event e) {
 				user = tuser.getText();
 				password = tpass.getText();
+				credentialsGiven = true;
 				shell.dispose();
 			}
 		});
