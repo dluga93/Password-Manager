@@ -7,7 +7,6 @@ import PwdManager.Logger;
 
 public class Hmac {
 	private final byte[] key;
-	private final static String HMAC_ALGORITHM = "HmacSHA1";
 	private final static int HASH_SIZE_IN_BYTES = 20;
 	public final static int KEY_SIZE_IN_BITS = 128;
 
@@ -20,8 +19,8 @@ public class Hmac {
 
 	public byte[] getMac(byte[] message) {
 		try {
-			Mac hmac = Mac.getInstance(HMAC_ALGORITHM);
-			hmac.init(new SecretKeySpec(key, HMAC_ALGORITHM));
+			Mac hmac = Mac.getInstance(CipherBuilder.KeyTypes.HMACSHA1.getType());
+			hmac.init(new SecretKeySpec(key, CipherBuilder.KeyTypes.HMACSHA1.getType()));
 			return hmac.doFinal(message);
 		} catch (Exception e) {
 			Logger.logException("Invalid parameters for MAC algorithm.", e);

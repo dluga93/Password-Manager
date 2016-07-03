@@ -11,6 +11,19 @@ public class CipherBuilder {
 	private static final String cipherInitString = "AES/CBC/PKCS5Padding";
 	private static final int pbeIterations = 1000;
 	public static final int keySizeInBits = 128;
+	public static enum KeyTypes {
+		AES("AES"),
+		HMACSHA1("HmacSHA1");
+		private final String type;
+		
+		KeyTypes(String type) {
+			this.type = type;
+		}
+
+		public String getType() {
+			return type;
+		}
+	}
 
 	public static StringCipher build(byte[] keyBytes) {
 		Cipher cipher = createCipher();
