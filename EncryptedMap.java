@@ -16,14 +16,14 @@ public class EncryptedMap {
 	public EncryptedMap(String user, String password) throws Exception {
 		this.user = user;
 		passwordMap = new HashMap<String, String>();
-		byte[] masterKey = tryGetMasterKey(password);
+		byte[] masterKey = tryReadKey(password, Registration.masterKeyFilename(user));
 		cipher = CipherBuilder.build(masterKey);
 		tryReadPasswords(cipher);
 	}
 
-	private byte[] tryGetMasterKey(String password) throws Exception {
+	private byte[] tryReadKey(String password, String filename) throws Exception {
 		try {
-			return getMasterKey(password);
+			return readKey(password, filename);
 		} catch (IOException e) {
 			throw new Exception("Problem reading master key.", e);
 		} catch (Exception e) {
@@ -31,15 +31,15 @@ public class EncryptedMap {
 		}
 	}
 
-	private byte[] getMasterKey(String password)
+	private byte[] readKey(String password, String filename)
 	throws FileNotFoundException, IOException, Exception {
-		EncodedFileReader fileReader = new EncodedFileReader(user + "_key");
-		byte[] encryptedMasterKey = fileReader.readData();
+		EncodedFileReader fileReader = new EncodedFileReader(filename);
+		byte[] encryptedKey = fileReader.readData();
 		fileReader.close();
 
-		StringCipher masterKeyDecrypter = CipherBuilder.build(user, password);
-		byte[] masterKey = masterKeyDecrypter.tryDecrypt(encryptedMasterKey);
-		return masterKey;
+		StringCipher keyDecrypter = CipherBuilder.build(user, password);
+		byte[] key = keyDecrypter.tryDecrypt(encryptedKey);
+		return key;
 	}
 
 	private void tryReadPasswords(StringCipher cipher) throws Exception {
@@ -66,8 +66,9 @@ public class EncryptedMap {
 	}
 
 	public void tryChangeMasterPassword(String oldPass, String newPass) throws Exception {
-		byte[] masterKey = tryGetMasterKey(oldPass);
-		Registration.registerUser(user, newPass, masterKey);
+		byte[] masterKey = tryReadKey(oldPass, Registration.masterKeyFilename(user));
+		byte[] macKey = tryReadKey(oldPass, Registration.macKeyFilename(user));
+		Registration.registerUser(user, newPass, masterKey, macKey);
 	}
 
 	private ArrayList<String> getFilenames(String user)

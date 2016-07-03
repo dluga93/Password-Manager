@@ -5,8 +5,9 @@ import java.nio.file.*;
 import java.io.*;
 
 public class Registration {
-	private static final String keyFilenameSuffix = "_keys";
-	private static final String saltFilenameSuffix = "_salt";
+	private static final String masterKeyFileSuffix = "_key";
+	private static final String macKeyFileSuffix = "_mackey";
+	private static final String saltFileSuffix = "_salt";
 	private static final String directorySuffix = "_dir";
 	private static byte[] encryptedMasterKey;
 	private static byte[] encryptedMacKey;
@@ -21,12 +22,13 @@ public class Registration {
 	}
 
 	// register with a preset master and mac key
-	public static void registerUser(String usr, String password, byte[] masterKey)
+	public static void registerUser(String usr, String password, byte[] masterKey, byte[] macKey)
 	throws Exception {
 		user = usr;
 		byte[] salt = CipherBuilder.randomData(CipherBuilder.keySizeInBits/8);
 		StringCipher cipher = tryCreateCipher(password, salt);
-		byte[] encryptedKey = cipher.tryEncrypt(masterKey);
+		encryptedMasterKey = cipher.tryEncrypt(masterKey);
+		encryptedMacKey = cipher.tryEncrypt(macKey);
 		tryCreateFiles(salt);
 	}
 
@@ -52,9 +54,9 @@ public class Registration {
 	}
 
 	private static void createFiles(byte[] salt) throws Exception {
-		saveDataToFile(salt, user + saltFilenameSuffix);
-		saveDataToFile(encryptedMasterKey, user + keyFilenameSuffix);
-		saveDataToFile(encryptedMacKey, user + keyFilenameSuffix);
+		saveDataToFile(salt, user + saltFileSuffix);
+		saveDataToFile(encryptedMasterKey, user + masterKeyFileSuffix);
+		saveDataToFile(encryptedMacKey, user + macKeyFileSuffix);
 		createPasswordDirectory();
 	}
 
@@ -78,5 +80,13 @@ public class Registration {
 		} catch (IOException e) {
 			throw new Exception("Couldn't create password directory.", e);
 		}
+	}
+
+	public static String masterKeyFilename(String user) {
+		return user + masterKeyFileSuffix;
+	}
+
+	public static String macKeyFilename(String user) {
+		return user + macKeyFileSuffix;
 	}
 }
