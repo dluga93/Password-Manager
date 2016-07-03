@@ -57,4 +57,15 @@ public class Hmac {
 			return true;
 		return false;
 	}
+
+	public static byte[] unwrap(byte[] maccedKey) throws Exception {
+		byte[] key = new byte[maccedKey.length - HASH_SIZE_IN_BYTES];
+		System.arraycopy(maccedKey, 0, key, 0, key.length);
+		byte[] mac = new byte[HASH_SIZE_IN_BYTES];
+		System.arraycopy(maccedKey, key.length, mac, 0, mac.length);
+		Hmac hmac = new Hmac(key);
+		if (hmac.isMacCorrect(key, mac))
+			return key;
+		return null;
+	}
 }

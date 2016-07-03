@@ -7,6 +7,7 @@ import java.io.*;
 import java.util.*;
 import PwdManager.Encryption.StringCipher;
 import PwdManager.Encryption.CipherBuilder;
+import PwdManager.Encryption.Hmac;
 
 public class EncryptedMap {
 	private StringCipher cipher;
@@ -16,8 +17,11 @@ public class EncryptedMap {
 	public EncryptedMap(String user, String password) throws Exception {
 		this.user = user;
 		passwordMap = new HashMap<String, String>();
-		byte[] masterKey = tryReadKey(password, Registration.masterKeyFilename(user));
-		byte[] macKey = tryReadKey(password, Registration.macKeyFilename(user));
+		byte[] maccedMacKey = tryReadKey(password, Registration.macKeyFilename(user));
+		byte[] macKey = Hmac.unwrap(maccedMacKey);
+		Hmac hmac = new Hmac(macKey);
+		byte[] maccedMasterKey = tryReadKey(password, Registration.masterKeyFilename(user));
+		byte[] masterKey = hmac.unmac(maccedMasterKey);
 		cipher = CipherBuilder.build(masterKey, macKey);
 		tryReadPasswords(cipher);
 	}

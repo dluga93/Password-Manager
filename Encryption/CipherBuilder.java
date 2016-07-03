@@ -41,7 +41,7 @@ public class CipherBuilder {
 	public static StringCipher build(byte[] keyBytes, byte[] macBytes) throws Exception {
 		Cipher cipher = createCipher();
 		SecretKey secretKey = new SecretKeySpec(keyBytes, 0, keyBytes.length, KeyTypes.AES.getType());
-		Hmac hmac = new Hmac(generateKey(KeyTypes.HMACSHA1));
+		Hmac hmac = new Hmac(macBytes);
 		return new StringCipherImpl(cipher, secretKey, hmac);
 	}
 

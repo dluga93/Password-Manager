@@ -2,6 +2,7 @@ package PwdManager;
 import PwdManager.Encryption.StringCipher;
 import PwdManager.Encryption.CipherBuilder.KeyTypes;
 import PwdManager.Encryption.CipherBuilder;
+import PwdManager.Encryption.Hmac;
 import java.nio.file.*;
 import java.io.*;
 
@@ -28,14 +29,20 @@ public class Registration {
 		user = usr;
 		byte[] salt = CipherBuilder.randomData(KeyTypes.AES.getSizeInBits()/8);
 		StringCipher cipher = tryCreateCipher(password, salt);
+		Hmac hmac = new Hmac(macKey);
+		masterKey = hmac.mac(masterKey);
+		macKey = hmac.mac(macKey);
 		encryptedMasterKey = cipher.tryEncrypt(masterKey);
 		encryptedMacKey = cipher.tryEncrypt(macKey);
 		tryCreateFiles(salt);
 	}
 
-	private static void createKeys(String password, byte[] salt) {
+	private static void createKeys(String password, byte[] salt) throws Exception {
 		byte[] masterKey = CipherBuilder.generateKey(CipherBuilder.KeyTypes.AES);
 		byte[] macKey = CipherBuilder.generateKey(CipherBuilder.KeyTypes.HMACSHA1);
+		Hmac hmac = new Hmac(macKey);
+		masterKey = hmac.mac(masterKey);
+		macKey = hmac.mac(macKey);
 		StringCipher cipher = tryCreateCipher(password, salt);
 		encryptedMasterKey = cipher.tryEncrypt(masterKey);
 		encryptedMacKey = cipher.tryEncrypt(macKey);
@@ -56,8 +63,8 @@ public class Registration {
 
 	private static void createFiles(byte[] salt) throws Exception {
 		saveDataToFile(salt, user + saltFileSuffix);
-		saveDataToFile(encryptedMasterKey, user + masterKeyFileSuffix);
-		saveDataToFile(encryptedMacKey, user + macKeyFileSuffix);
+		saveDataToFile(encryptedMasterKey, masterKeyFilename(user));
+		saveDataToFile(encryptedMacKey, macKeyFilename(user));
 		createPasswordDirectory();
 	}
 
@@ -93,5 +100,9 @@ public class Registration {
 
 	public static String saltFilename(String user) {
 		return user + saltFileSuffix;
+	}
+
+	public static String directoryName(String user) {
+		return user + directorySuffix;
 	}
 }

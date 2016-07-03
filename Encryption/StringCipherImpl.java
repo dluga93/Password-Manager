@@ -65,7 +65,8 @@ class StringCipherImpl implements StringCipher {
 											   encrypted.length);
 		try {
 			return decrypt(iv, cipherText);
-		} catch (Exception e) {
+		} catch (InvalidAlgorithmParameterException | InvalidKeyException |
+				IllegalBlockSizeException | BadPaddingException e) {
 			throw new Exception("Problem decrypting string.", e);
 		}
 	}
