@@ -1,5 +1,3 @@
-// TODO: correct message for wrong password
-
 package PwdManager;
 
 import java.io.*;

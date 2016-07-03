@@ -77,8 +77,8 @@ class UIUtility {
 
 	public static int errorMessage(String title, String message) {
 		final Shell shell = UIUtility.createShell(new FillLayout());
-		shell.setText(title);
-		MessageBox errorBox = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK);
+		MessageBox errorBox = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK | SWT.TITLE);
+		errorBox.setText(title);
 		errorBox.setMessage(message);
 		return errorBox.open();
 	}

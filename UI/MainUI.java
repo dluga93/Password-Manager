@@ -1,6 +1,5 @@
 package PwdManager.UI;
 
-// TODO: File isn't a good name for the submenu
 import PwdManager.EncryptedMap;
 import org.eclipse.swt.*;
 import org.eclipse.swt.widgets.*;

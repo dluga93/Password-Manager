@@ -77,7 +77,7 @@ public class AuthenticationUI {
 			passwords = new EncryptedMap(user, password);
 			return true;
 		} catch (IntegrityException e) {
-			UIUtility.errorMessage("Login", "Wrong Password.");
+			UIUtility.errorMessage("Login", "Wrong Password or corrupted files.");
 			return false;
 		} catch (Exception e) {
 			UIUtility.errorMessage("Login", e.getMessage());
@@ -90,7 +90,7 @@ public class AuthenticationUI {
 			Registration.registerUser(user, password);
 			return true;
 		} catch (Exception e) {
-			UIUtility.errorMessage("Registration Error", e.getMessage());
+			UIUtility.errorMessage("Registration", e.getMessage());
 			return false;
 		}
 	}
