@@ -20,7 +20,7 @@ public class Registration {
 		tryCreateFiles(salt);
 	}
 
-	// register with a preset master key
+	// register with a preset master and mac key
 	public static void registerUser(String usr, String password, byte[] masterKey)
 	throws Exception {
 		user = usr;

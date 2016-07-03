@@ -31,6 +31,8 @@ class StringCipherImpl implements StringCipher {
 
 	// also prepends IV
 	public byte[] tryEncrypt(byte[] plaintext) {
+		if (hmac != null)
+			plaintext = hmac.mac(plaintext);
 		return ivAndEncrypt(plaintext);
 	}
 
@@ -69,10 +71,12 @@ class StringCipherImpl implements StringCipher {
 
 	private byte[] decrypt(byte[] iv, byte[] ciphertext)
 	throws InvalidAlgorithmParameterException, InvalidKeyException,
-	IllegalBlockSizeException, BadPaddingException {
+	IllegalBlockSizeException, BadPaddingException, Exception {
 		IvParameterSpec IV = new IvParameterSpec(iv);
 		cipher.init(Cipher.DECRYPT_MODE, secretKey, IV);
 		byte[] decryptedBytes = cipher.doFinal(ciphertext);
+		if (hmac != null)
+			decryptedBytes = hmac.unmac(decryptedBytes);
 		return decryptedBytes;
 	}
 }
