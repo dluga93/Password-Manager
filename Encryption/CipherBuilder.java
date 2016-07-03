@@ -31,11 +31,11 @@ public class CipherBuilder {
 		}
 	}
 
-	public static StringCipher build(byte[] keyBytes) {
+	/*public static StringCipher build(byte[] keyBytes) {
 		Cipher cipher = createCipher();
 		SecretKey secretKey = new SecretKeySpec(keyBytes, 0, keyBytes.length, KeyTypes.AES.getType());
 		return new StringCipherImpl(cipher, secretKey);
-	}
+	}*/
 
 	// temporary. join with above and make the macBytes parameter non-optional
 	public static StringCipher build(byte[] keyBytes, byte[] macBytes) throws Exception {

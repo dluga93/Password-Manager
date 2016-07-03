@@ -17,7 +17,8 @@ public class EncryptedMap {
 		this.user = user;
 		passwordMap = new HashMap<String, String>();
 		byte[] masterKey = tryReadKey(password, Registration.masterKeyFilename(user));
-		cipher = CipherBuilder.build(masterKey);
+		byte[] macKey = tryReadKey(password, Registration.macKeyFilename(user));
+		cipher = CipherBuilder.build(masterKey, macKey);
 		tryReadPasswords(cipher);
 	}
 
