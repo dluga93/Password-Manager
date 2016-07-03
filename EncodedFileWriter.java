@@ -10,6 +10,10 @@ public class EncodedFileWriter {
 		fileOutStream = new FileOutputStream(filename);
 	}
 
+	public EncodedFileWriter(String filename, boolean append) throws FileNotFoundException {
+		fileOutStream = new FileOutputStream(filename, append);
+	}
+
 	public void close() throws IOException {
 		fileOutStream.close();
 	}

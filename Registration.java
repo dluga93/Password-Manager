@@ -5,14 +5,19 @@ import java.nio.file.*;
 import java.io.*;
 
 public class Registration {
+	private static final String keyFilenameSuffix = "_keys";
+	private static final String saltFilenameSuffix = "_salt";
+	private static final String directorySuffix = "_dir";
+	private static byte[] encryptedMasterKey;
+	private static byte[] encryptedMacKey;
 	private static String user;
 
 	public static void registerUser(String usr, String password)
 	throws Exception {
 		user = usr;
 		byte[] salt = CipherBuilder.randomData(CipherBuilder.keySizeInBits/8);
-		byte[] masterKey = createEncryptedMasterKey(password, salt);
-		tryCreateFiles(salt, masterKey);
+		createKeys(password, salt);
+		tryCreateFiles(salt);
 	}
 
 	// register with a preset master key
@@ -22,32 +27,34 @@ public class Registration {
 		byte[] salt = CipherBuilder.randomData(CipherBuilder.keySizeInBits/8);
 		StringCipher cipher = tryCreateCipher(password, salt);
 		byte[] encryptedKey = cipher.tryEncrypt(masterKey);
-		tryCreateFiles(salt, encryptedKey);
+		tryCreateFiles(salt);
 	}
 
-	private static byte[] createEncryptedMasterKey(String password, byte[] salt) {
-		byte[] key = CipherBuilder.generateKey(CipherBuilder.KeyTypes.AES);
+	private static void createKeys(String password, byte[] salt) {
+		byte[] masterKey = CipherBuilder.generateKey(CipherBuilder.KeyTypes.AES);
+		byte[] macKey = CipherBuilder.generateKey(CipherBuilder.KeyTypes.HMACSHA1);
 		StringCipher cipher = tryCreateCipher(password, salt);
-		byte[] encryptedKey = cipher.tryEncrypt(key);
-		return encryptedKey;
+		encryptedMasterKey = cipher.tryEncrypt(masterKey);
+		encryptedMacKey = cipher.tryEncrypt(macKey);
 	}
 
 	private static StringCipher tryCreateCipher(String password, byte[] salt) {
 		return CipherBuilder.build(password, salt);
 	}
 
-	private static void tryCreateFiles(byte[] salt, byte[] masterKey) {
+	private static void tryCreateFiles(byte[] salt) {
 		try {
-			createFiles(salt, masterKey);
+			createFiles(salt);
 		} catch (Exception e) {
 			Logger.logException("Can't create files for signing up.", e);
 			System.exit(1);
 		}
 	}
 
-	private static void createFiles(byte[] salt, byte[] masterKey) throws Exception {
-		saveDataToFile(salt, user + "_salt");
-		saveDataToFile(masterKey, user + "_key");
+	private static void createFiles(byte[] salt) throws Exception {
+		saveDataToFile(salt, user + saltFilenameSuffix);
+		saveDataToFile(encryptedMasterKey, user + keyFilenameSuffix);
+		saveDataToFile(encryptedMacKey, user + keyFilenameSuffix);
 		createPasswordDirectory();
 	}
 
@@ -57,14 +64,14 @@ public class Registration {
 			fileWriter.writeData(data);
 			fileWriter.close();
 		} catch (IOException e) {
-			throw new Exception("Couldn't create " + filename + " file.", e);
+			throw new Exception("Couldn't write to " + filename + " file.", e);
 		}
 	}
 
 	// TODO: BAD! Find a new way to change master password, not just register again
 	// with a new password and same master key.
 	private static void createPasswordDirectory() throws Exception {
-		String directoryName = user + "_dir";
+		String directoryName = user + directorySuffix;
 		try {
 			Files.createDirectory(Paths.get(directoryName));
 		} catch (FileAlreadyExistsException e) {
