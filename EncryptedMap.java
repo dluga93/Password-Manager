@@ -3,6 +3,7 @@ package PwdManager;
 import java.io.*;
 import java.util.*;
 import javax.crypto.*;
+import java.nio.file.*;
 import PwdManager.Encryption.StringCipher;
 import PwdManager.Encryption.CipherBuilder;
 import PwdManager.Encryption.Hmac;
@@ -77,7 +78,11 @@ public class EncryptedMap {
 	public void tryChangeMasterPassword(String oldPass, String newPass) throws Exception {
 		byte[] masterKey = tryReadKey(oldPass, Naming.masterKeyFilename(user));
 		byte[] macKey = tryReadKey(oldPass, Naming.macKeyFilename(user));
-		Registration.registerUser(user, newPass, masterKey, macKey);
+		try {
+			Registration.registerUser(user, newPass, masterKey, macKey);
+		} catch (FileAlreadyExistsException e) {
+			// supposed to happen because password folder already exists. ignore
+		}
 	}
 
 	public void addEntry(String website, String password)

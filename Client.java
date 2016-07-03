@@ -5,6 +5,8 @@ assignment in my Security course.
 package PwdManager;
 import PwdManager.UI.MainUI;
 
+// TODO: does registering with an existing username overwrite the key files?
+
 /**
  * The main client.
  */

@@ -11,7 +11,8 @@ public class Registration {
 	private static byte[] encryptedMacKey;
 	private static String user;
 
-	public static void registerUser(String usr, String password) throws Exception {
+	public static void registerUser(String usr, String password)
+	throws FileAlreadyExistsException, Exception {
 		user = usr;
 		byte[] salt = CipherBuilder.randomData(KeyTypes.AES.getSizeInBits()/8);
 		createKeys(password, salt);
@@ -20,7 +21,7 @@ public class Registration {
 
 	// register with a preset master and mac key
 	public static void registerUser(String usr, String password, byte[] masterKey, byte[] macKey)
-	throws Exception {
+	throws FileAlreadyExistsException, Exception {
 		user = usr;
 		byte[] salt = CipherBuilder.randomData(KeyTypes.AES.getSizeInBits()/8);
 		StringCipher cipher = CipherBuilder.build(password, salt);
@@ -45,16 +46,18 @@ public class Registration {
 		encryptedMacKey = cipher.tryEncrypt(macKey);
 	}
 
-	private static void tryCreateFiles(byte[] salt) {
+	private static void tryCreateFiles(byte[] salt) throws FileAlreadyExistsException {
 		try {
 			createFiles(salt);
+		} catch (FileAlreadyExistsException e) {
+			throw e;
 		} catch (Exception e) {
 			Logger.logException("Can't create files for signing up.", e);
 			System.exit(1);
 		}
 	}
 
-	private static void createFiles(byte[] salt) throws Exception {
+	private static void createFiles(byte[] salt) throws FileAlreadyExistsException, Exception {
 		saveDataToFile(salt, Naming.saltFilename(user));
 		saveDataToFile(encryptedMasterKey, Naming.masterKeyFilename(user));
 		saveDataToFile(encryptedMacKey, Naming.macKeyFilename(user));
@@ -71,13 +74,12 @@ public class Registration {
 		}
 	}
 
-	// TODO: BAD! Find a new way to change master password, not just register again
-	// with a new password and same master key.
-	private static void createPasswordDirectory() throws Exception {
+	private static void createPasswordDirectory() throws FileAlreadyExistsException, Exception {
 		String directoryName = Naming.directoryName(user);
 		try {
 			Files.createDirectory(Paths.get(directoryName));
 		} catch (FileAlreadyExistsException e) {
+			throw e;
 		} catch (IOException e) {
 			throw new Exception("Couldn't create password directory.", e);
 		}

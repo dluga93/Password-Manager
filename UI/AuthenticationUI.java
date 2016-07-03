@@ -6,6 +6,7 @@ import PwdManager.Registration;
 import org.eclipse.swt.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.layout.*;
+import java.nio.file.*;
 
 public class AuthenticationUI {
 	private static String user;
@@ -89,6 +90,9 @@ public class AuthenticationUI {
 		try {
 			Registration.registerUser(user, password);
 			return true;
+		} catch (FileAlreadyExistsException e) {
+			UIUtility.errorMessage("Registration.", "User " + user + " already exists.");
+			return false;
 		} catch (Exception e) {
 			UIUtility.errorMessage("Registration", e.getMessage());
 			return false;
