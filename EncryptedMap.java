@@ -95,7 +95,8 @@ public class EncryptedMap {
 	throws FileNotFoundException, IOException {
 		byte[] encryptedWebsite = cipher.tryEncrypt(website);
 		byte[] encryptedPassword = cipher.tryEncrypt(password);
-		String pathname = user + "_dir" + File.separator + user + "_" + website;
+		String pathname = Registration.directoryName(user) + File.separator +
+				Registration.entryFilename(user, website);
 
 		EncodedFileWriter fileWriter = new EncodedFileWriter(pathname);
 		fileWriter.writeData(encryptedWebsite);
@@ -105,7 +106,8 @@ public class EncryptedMap {
 	}
 
 	public void removeEntry(String website) throws Exception {
-		String pathname = user + "_dir" + File.separator + user + "_" + website;
+		String pathname = Registration.directoryName(user) + File.separator +
+				Registration.entryFilename(user, website);
 		EncodedFileWriter.deleteFile(pathname);
 		passwordMap.remove(website);
 	}
@@ -119,6 +121,6 @@ public class EncryptedMap {
 	}
 
 	public void deleteAccount() throws Exception {
-		EncodedFileWriter.deleteFile(user + "_dir");
+		EncodedFileWriter.deleteFile(Registration.directoryName(user));
 	}
 }

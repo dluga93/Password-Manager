@@ -105,4 +105,8 @@ public class Registration {
 	public static String directoryName(String user) {
 		return user + directorySuffix;
 	}
+
+	public static String entryFilename(String user, String website) {
+		return user + "_" + website;
+	}
 }
