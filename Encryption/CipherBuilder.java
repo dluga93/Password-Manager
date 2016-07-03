@@ -1,7 +1,7 @@
 package PwdManager.Encryption;
 import PwdManager.Logger;
 import PwdManager.EncodedFileReader;
-import PwdManager.Registration;
+import PwdManager.Naming;
 
 import javax.crypto.*;
 import javax.crypto.spec.*;
@@ -31,16 +31,10 @@ public class CipherBuilder {
 		}
 	}
 
-	/*public static StringCipher build(byte[] keyBytes) {
-		Cipher cipher = createCipher();
-		SecretKey secretKey = new SecretKeySpec(keyBytes, 0, keyBytes.length, KeyTypes.AES.getType());
-		return new StringCipherImpl(cipher, secretKey);
-	}*/
-
-	// temporary. join with above and make the macBytes parameter non-optional
 	public static StringCipher build(byte[] keyBytes, byte[] macBytes) throws Exception {
 		Cipher cipher = createCipher();
-		SecretKey secretKey = new SecretKeySpec(keyBytes, 0, keyBytes.length, KeyTypes.AES.getType());
+		SecretKey secretKey = new SecretKeySpec(keyBytes, 0, keyBytes.length,
+												KeyTypes.AES.getType());
 		Hmac hmac = new Hmac(macBytes);
 		return new StringCipherImpl(cipher, secretKey, hmac);
 	}
@@ -70,7 +64,7 @@ public class CipherBuilder {
 
 	private static byte[] readSaltFromFile(String user) throws Exception {
 		try {
-			EncodedFileReader fileReader = new EncodedFileReader(Registration.saltFilename(user));
+			EncodedFileReader fileReader = new EncodedFileReader(Naming.saltFilename(user));
 			byte[] salt = fileReader.readData();
 			fileReader.close();
 			return salt;

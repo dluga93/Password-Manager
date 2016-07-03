@@ -1,10 +1,10 @@
 // TODO: correct message for wrong password
-// TODO: integrity checking for the saved files.
 
 package PwdManager;
 
 import java.io.*;
 import java.util.*;
+import javax.crypto.*;
 import PwdManager.Encryption.StringCipher;
 import PwdManager.Encryption.CipherBuilder;
 import PwdManager.Encryption.Hmac;
@@ -14,14 +14,17 @@ public class EncryptedMap {
 	private HashMap<String, String> passwordMap;
 	private final String user;
 
-	public EncryptedMap(String user, String password) throws Exception {
+	public EncryptedMap(String user, String password) throws Hmac.IntegrityException, Exception {
 		this.user = user;
 		passwordMap = new HashMap<String, String>();
-		byte[] maccedMacKey = tryReadKey(password, Registration.macKeyFilename(user));
+
+		byte[] maccedMacKey = tryReadKey(password, Naming.macKeyFilename(user));
 		byte[] macKey = Hmac.unwrap(maccedMacKey);
+		
 		Hmac hmac = new Hmac(macKey);
-		byte[] maccedMasterKey = tryReadKey(password, Registration.masterKeyFilename(user));
+		byte[] maccedMasterKey = tryReadKey(password, Naming.masterKeyFilename(user));
 		byte[] masterKey = hmac.unmac(maccedMasterKey);
+		
 		cipher = CipherBuilder.build(masterKey, macKey);
 		tryReadPasswords(cipher);
 	}
@@ -30,14 +33,14 @@ public class EncryptedMap {
 		try {
 			return readKey(password, filename);
 		} catch (IOException e) {
-			throw new Exception("Problem reading master key.", e);
-		} catch (Exception e) {
-			throw new Exception("User does not exist.", e);
+			throw new Exception("User does not exist or key file corrupted.", e);
+		} catch (BadPaddingException e) {
+			throw new Exception("Wrong password or corrupted files.", e);
 		}
 	}
 
 	private byte[] readKey(String password, String filename)
-	throws FileNotFoundException, IOException, Exception {
+	throws FileNotFoundException, IOException, BadPaddingException, Exception {
 		EncodedFileReader fileReader = new EncodedFileReader(filename);
 		byte[] encryptedKey = fileReader.readData();
 		fileReader.close();
@@ -54,12 +57,15 @@ public class EncryptedMap {
 			throw new Exception("Can't find password directory/file.", e);
 		} catch (IOException e) {	// also handles EOFException
 			throw new Exception("Problem reading password files.", e);
+		} catch (BadPaddingException e) {
+			throw new Exception("Password file corrupted.", e);
 		}
 	}
 
 	private void readPasswords(StringCipher cipher)
-	throws FileNotFoundException, IOException, EOFException, Exception {
-		ArrayList<String> filenames = getFilenames(user);
+	throws FileNotFoundException, IOException, EOFException,
+	BadPaddingException, Exception {
+		ArrayList<String> filenames = EncodedFileReader.getFilenames(user);
 
 		for (String filename : filenames) {
 			EncodedFileReader fileReader = new EncodedFileReader(filename);
@@ -71,32 +77,17 @@ public class EncryptedMap {
 	}
 
 	public void tryChangeMasterPassword(String oldPass, String newPass) throws Exception {
-		byte[] masterKey = tryReadKey(oldPass, Registration.masterKeyFilename(user));
-		byte[] macKey = tryReadKey(oldPass, Registration.macKeyFilename(user));
+		byte[] masterKey = tryReadKey(oldPass, Naming.masterKeyFilename(user));
+		byte[] macKey = tryReadKey(oldPass, Naming.macKeyFilename(user));
 		Registration.registerUser(user, newPass, masterKey, macKey);
-	}
-
-	private ArrayList<String> getFilenames(String user)
-	throws Exception {
-		File directory = new File(user + "_dir");
-		if (!directory.exists())
-			throw new Exception("Password directory not found.");
-
-		File[] passwordFiles = directory.listFiles();
-		ArrayList<String> filenames = new ArrayList<String>();
-		for (File file : passwordFiles) {
-			String filename = user + "_dir" + File.separator + file.getName();
-			filenames.add(filename);
-		}
-		return filenames;
 	}
 
 	public void addEntry(String website, String password)
 	throws FileNotFoundException, IOException {
 		byte[] encryptedWebsite = cipher.tryEncrypt(website);
 		byte[] encryptedPassword = cipher.tryEncrypt(password);
-		String pathname = Registration.directoryName(user) + File.separator +
-				Registration.entryFilename(user, website);
+		String pathname = Naming.directoryName(user) + File.separator +
+				Naming.entryFilename(user, website);
 
 		EncodedFileWriter fileWriter = new EncodedFileWriter(pathname);
 		fileWriter.writeData(encryptedWebsite);
@@ -106,8 +97,8 @@ public class EncryptedMap {
 	}
 
 	public void removeEntry(String website) throws Exception {
-		String pathname = Registration.directoryName(user) + File.separator +
-				Registration.entryFilename(user, website);
+		String pathname = Naming.directoryName(user) + File.separator +
+				Naming.entryFilename(user, website);
 		EncodedFileWriter.deleteFile(pathname);
 		passwordMap.remove(website);
 	}
@@ -121,6 +112,6 @@ public class EncryptedMap {
 	}
 
 	public void deleteAccount() throws Exception {
-		EncodedFileWriter.deleteFile(Registration.directoryName(user));
+		EncodedFileWriter.deleteFile(Naming.directoryName(user));
 	}
 }

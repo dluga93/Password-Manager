@@ -23,9 +23,15 @@ public class EncodedFileWriter {
 		fileOutStream.write(encoded);
 	}
 
-	public void writeInt(int toWrite) throws IOException {
-		byte[] encoded = encodeInt(toWrite);
-		fileOutStream.write(encoded);
+	private byte[] encodeBytes(byte[] bytes) {
+		int length = bytes.length;
+		byte[] lengthBytes = encodeInt(length);
+
+		byte[] encodedBytes = new byte[length+4];
+		System.arraycopy(lengthBytes, 0, encodedBytes, 0, 4);
+		System.arraycopy(bytes, 0, encodedBytes, 4, length);
+
+		return encodedBytes;
 	}
 
 	private byte[] encodeInt(int toEncode) {
@@ -37,17 +43,6 @@ public class EncodedFileWriter {
 		}
 
 		return encodedInt;
-	}
-
-	private byte[] encodeBytes(byte[] bytes) {
-		int length = bytes.length;
-		byte[] lengthBytes = encodeInt(length);
-
-		byte[] encodedBytes = new byte[length+4];
-		System.arraycopy(lengthBytes, 0, encodedBytes, 0, 4);
-		System.arraycopy(bytes, 0, encodedBytes, 4, length);
-
-		return encodedBytes;
 	}
 
 	public static void deleteFile(String pathname) throws Exception {

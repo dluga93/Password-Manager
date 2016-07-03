@@ -1,6 +1,7 @@
 package PwdManager;
 
 import java.io.*;
+import java.util.*;
 
 public class EncodedFileReader {
 	private FileInputStream fileInStream;
@@ -15,10 +16,6 @@ public class EncodedFileReader {
 
 	public byte[] readData() throws IOException, EOFException {
 		return decodeBytes(fileInStream);
-	}
-
-	public int readInt() throws IOException, EOFException {
-		return decodeInt(fileInStream);
 	}
 
 	private byte[] decodeBytes(FileInputStream file) throws IOException, EOFException {
@@ -44,5 +41,21 @@ public class EncodedFileReader {
 		}
 
 		return decodedInt;
+	}
+
+	public static ArrayList<String> getFilenames(String user)
+	throws Exception {
+		File directory = new File(Naming.directoryName(user));
+		if (!directory.exists())
+			throw new Exception("Password directory not found.");
+
+		File[] passwordFiles = directory.listFiles();
+		ArrayList<String> filenames = new ArrayList<String>();
+		for (File file : passwordFiles) {
+			String filename = user + "_dir" + File.separator + file.getName();
+			filenames.add(filename);
+		}
+
+		return filenames;
 	}
 }

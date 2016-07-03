@@ -53,12 +53,12 @@ class StringCipherImpl implements StringCipher {
 		}
 	}
 
-	public String tryDecryptString(byte[] encrypted) throws Exception {
+	public String tryDecryptString(byte[] encrypted) throws BadPaddingException, Exception {
 		byte[] decrypted = tryDecrypt(encrypted);
 		return new String(decrypted, StandardCharsets.UTF_8);
 	}
 
-	public byte[] tryDecrypt(byte[] encrypted) throws Exception {
+	public byte[] tryDecrypt(byte[] encrypted) throws BadPaddingException, Exception {
 		byte[] iv = Arrays.copyOfRange(encrypted,0,KeyTypes.AES.getSizeInBits()/8);
 		byte[] cipherText = Arrays.copyOfRange(encrypted,
 											   KeyTypes.AES.getSizeInBits()/8,
@@ -66,7 +66,7 @@ class StringCipherImpl implements StringCipher {
 		try {
 			return decrypt(iv, cipherText);
 		} catch (InvalidAlgorithmParameterException | InvalidKeyException |
-				IllegalBlockSizeException | BadPaddingException e) {
+				IllegalBlockSizeException e) {
 			throw new Exception("Problem decrypting. Data corrupted.", e);
 		}
 	}

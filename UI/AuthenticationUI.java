@@ -1,5 +1,6 @@
 package PwdManager.UI;
 import PwdManager.EncryptedMap;
+import PwdManager.Encryption.Hmac.IntegrityException;
 import PwdManager.Registration;
 
 import org.eclipse.swt.*;
@@ -75,8 +76,11 @@ public class AuthenticationUI {
 		try {
 			passwords = new EncryptedMap(user, password);
 			return true;
+		} catch (IntegrityException e) {
+			UIUtility.errorMessage("Login", "Wrong Password.");
+			return false;
 		} catch (Exception e) {
-			UIUtility.errorMessage("Authentication Error", e.getMessage());
+			UIUtility.errorMessage("Login", e.getMessage());
 			return false;
 		}
 	}

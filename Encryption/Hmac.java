@@ -8,31 +8,47 @@ import PwdManager.Encryption.CipherBuilder.KeyTypes;
 
 public class Hmac {
 	private final byte[] key;
+	private final static KeyTypes keyType = KeyTypes.HMACSHA1;
 	private final static int HASH_SIZE_IN_BYTES = 20;
 
+	@SuppressWarnings("serial")
+	public class IntegrityException extends Exception {
+		public IntegrityException() {
+			super();
+		}
+
+		public IntegrityException(String message) {
+			super(message);
+		}
+
+		public IntegrityException(String message, Throwable cause) {
+			super(message, cause);
+		}
+	}
+
 	public Hmac(byte[] key) throws Exception {
-		if (key.length != KeyTypes.HMACSHA1.getSizeInBits()/8)
-			throw new Exception("Wrong Key Size. " + KeyTypes.HMACSHA1.getSizeInBits()
+		if (key.length != keyType.getSizeInBits()/8)
+			throw new Exception("Wrong Key Size. " + keyType.getSizeInBits()
 								+ " bits expected.");
 
 		this.key = key;
 	}
 
+	public byte[] mac(byte[] message) {
+		byte[] mac = getMac(message);
+		return Utility.concatByteArray(message, mac);
+	}
+
 	public byte[] getMac(byte[] message) {
 		try {
-			Mac hmac = Mac.getInstance(CipherBuilder.KeyTypes.HMACSHA1.getType());
-			hmac.init(new SecretKeySpec(key, CipherBuilder.KeyTypes.HMACSHA1.getType()));
+			Mac hmac = Mac.getInstance(keyType.getType());
+			hmac.init(new SecretKeySpec(key, keyType.getType()));
 			return hmac.doFinal(message);
 		} catch (Exception e) {
 			Logger.logException("Invalid parameters for MAC algorithm.", e);
 			System.exit(1);
 			return null;
 		}
-	}
-
-	public byte[] mac(byte[] message) {
-		byte[] mac = getMac(message);
-		return Utility.concatByteArray(message, mac);
 	}
 
 	public byte[] unmac(byte[] maccedMessage) throws Exception {
@@ -58,7 +74,7 @@ public class Hmac {
 		return false;
 	}
 
-	public static byte[] unwrap(byte[] maccedKey) throws Exception {
+	public static byte[] unwrap(byte[] maccedKey) throws IntegrityException, Exception {
 		byte[] key = new byte[maccedKey.length - HASH_SIZE_IN_BYTES];
 		System.arraycopy(maccedKey, 0, key, 0, key.length);
 		byte[] mac = new byte[HASH_SIZE_IN_BYTES];
@@ -66,6 +82,7 @@ public class Hmac {
 		Hmac hmac = new Hmac(key);
 		if (hmac.isMacCorrect(key, mac))
 			return key;
-		return null;
+		else
+			throw hmac.new IntegrityException();
 	}
 }
