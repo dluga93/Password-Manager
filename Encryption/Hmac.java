@@ -4,15 +4,16 @@ import javax.crypto.*;
 import javax.crypto.spec.*;
 import java.util.*;
 import PwdManager.Logger;
+import PwdManager.Encryption.CipherBuilder.KeyTypes;
 
 public class Hmac {
 	private final byte[] key;
 	private final static int HASH_SIZE_IN_BYTES = 20;
-	public final static int KEY_SIZE_IN_BITS = 128;
 
 	public Hmac(byte[] key) throws Exception {
-		if (key.length != KEY_SIZE_IN_BITS/8)
-			throw new Exception("Wrong Key Size. " + KEY_SIZE_IN_BITS + " bits expected.");
+		if (key.length != KeyTypes.HMACSHA1.getSizeInBits()/8)
+			throw new Exception("Wrong Key Size. " + KeyTypes.HMACSHA1.getSizeInBits()
+								+ " bits expected.");
 
 		this.key = key;
 	}

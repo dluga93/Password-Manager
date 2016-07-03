@@ -1,5 +1,6 @@
 package PwdManager;
 import PwdManager.Encryption.StringCipher;
+import PwdManager.Encryption.CipherBuilder.KeyTypes;
 import PwdManager.Encryption.CipherBuilder;
 import java.nio.file.*;
 import java.io.*;
@@ -16,7 +17,7 @@ public class Registration {
 	public static void registerUser(String usr, String password)
 	throws Exception {
 		user = usr;
-		byte[] salt = CipherBuilder.randomData(CipherBuilder.keySizeInBits/8);
+		byte[] salt = CipherBuilder.randomData(KeyTypes.AES.getSizeInBits()/8);
 		createKeys(password, salt);
 		tryCreateFiles(salt);
 	}
@@ -25,7 +26,7 @@ public class Registration {
 	public static void registerUser(String usr, String password, byte[] masterKey, byte[] macKey)
 	throws Exception {
 		user = usr;
-		byte[] salt = CipherBuilder.randomData(CipherBuilder.keySizeInBits/8);
+		byte[] salt = CipherBuilder.randomData(KeyTypes.AES.getSizeInBits()/8);
 		StringCipher cipher = tryCreateCipher(password, salt);
 		encryptedMasterKey = cipher.tryEncrypt(masterKey);
 		encryptedMacKey = cipher.tryEncrypt(macKey);
@@ -88,5 +89,9 @@ public class Registration {
 
 	public static String macKeyFilename(String user) {
 		return user + macKeyFileSuffix;
+	}
+
+	public static String saltFilename(String user) {
+		return user + saltFileSuffix;
 	}
 }

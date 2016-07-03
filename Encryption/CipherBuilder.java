@@ -1,6 +1,7 @@
 package PwdManager.Encryption;
 import PwdManager.Logger;
 import PwdManager.EncodedFileReader;
+import PwdManager.Registration;
 
 import javax.crypto.*;
 import javax.crypto.spec.*;
@@ -10,25 +11,38 @@ import java.io.*;
 public class CipherBuilder {
 	private static final String cipherInitString = "AES/CBC/PKCS5Padding";
 	private static final int pbeIterations = 1000;
-	public static final int keySizeInBits = 128;
 	public static enum KeyTypes {
-		AES("AES"),
-		HMACSHA1("HmacSHA1");
+		AES("AES", 128),
+		HMACSHA1("HmacSHA1", 128);
 		private final String type;
+		private final int sizeInBits;
 		
-		KeyTypes(String type) {
+		KeyTypes(String type, int sizeInBits) {
 			this.type = type;
+			this.sizeInBits = sizeInBits;
 		}
 
 		public String getType() {
 			return type;
 		}
+
+		public int getSizeInBits() {
+			return sizeInBits;
+		}
 	}
 
 	public static StringCipher build(byte[] keyBytes) {
 		Cipher cipher = createCipher();
-		SecretKey secretKey = new SecretKeySpec(keyBytes, 0, keyBytes.length, "AES");
+		SecretKey secretKey = new SecretKeySpec(keyBytes, 0, keyBytes.length, KeyTypes.AES.getType());
 		return new StringCipherImpl(cipher, secretKey);
+	}
+
+	// temporary. join with above and make the macBytes parameter non-optional
+	public static StringCipher build(byte[] keyBytes, byte[] macBytes) throws Exception {
+		Cipher cipher = createCipher();
+		SecretKey secretKey = new SecretKeySpec(keyBytes, 0, keyBytes.length, KeyTypes.AES.getType());
+		Hmac hmac = new Hmac(generateKey(KeyTypes.HMACSHA1));
+		return new StringCipherImpl(cipher, secretKey, hmac);
 	}
 
 	public static StringCipher build(String user, String password) throws Exception {
@@ -56,7 +70,7 @@ public class CipherBuilder {
 
 	private static byte[] readSaltFromFile(String user) throws Exception {
 		try {
-			EncodedFileReader fileReader = new EncodedFileReader(user + "_salt");
+			EncodedFileReader fileReader = new EncodedFileReader(Registration.saltFilename(user));
 			byte[] salt = fileReader.readData();
 			fileReader.close();
 			return salt;
@@ -70,10 +84,10 @@ public class CipherBuilder {
 	private static SecretKey keyFromPasswordAndSalt(String password, byte[] salt) {
 		try {
 			char[] chars = password.toCharArray();
-			PBEKeySpec spec = new PBEKeySpec(chars, salt, pbeIterations, keySizeInBits);
+			PBEKeySpec spec = new PBEKeySpec(chars, salt, pbeIterations, KeyTypes.AES.getSizeInBits());
 			SecretKeyFactory skf = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
 			byte[] secretKeyBytes = skf.generateSecret(spec).getEncoded();
-			return new SecretKeySpec(secretKeyBytes, 0, secretKeyBytes.length, "AES");
+			return new SecretKeySpec(secretKeyBytes, 0, secretKeyBytes.length, KeyTypes.AES.getType());
 		} catch (Exception e) {
 			Logger.logException("Problem with creating master key from password and salt.", e);
 			System.exit(1);
@@ -84,7 +98,7 @@ public class CipherBuilder {
 	public static byte[] generateKey(KeyTypes keyType) {
 		try {
 			KeyGenerator keyGenerator = KeyGenerator.getInstance(keyType.getType());
-			keyGenerator.init(CipherBuilder.keySizeInBits);
+			keyGenerator.init(keyType.getSizeInBits());
 			return keyGenerator.generateKey().getEncoded();
 		} catch (NoSuchAlgorithmException e) {
 			Logger.logException("Unknown algorithm for key generation.", e);

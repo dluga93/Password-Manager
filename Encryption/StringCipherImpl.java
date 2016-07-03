@@ -1,5 +1,6 @@
 package PwdManager.Encryption;
 import PwdManager.Logger;
+import PwdManager.Encryption.CipherBuilder.KeyTypes;
 
 import java.nio.charset.*;
 import javax.crypto.*;
@@ -38,7 +39,7 @@ class StringCipherImpl implements StringCipher {
 
 	private byte[] ivAndEncrypt(byte[] plaintext) {
 		try {
-			byte[] ivBytes = CipherBuilder.randomData(CipherBuilder.keySizeInBits/8);
+			byte[] ivBytes = CipherBuilder.randomData(KeyTypes.AES.getSizeInBits()/8);
 			IvParameterSpec iv = new IvParameterSpec(ivBytes);
 			cipher.init(Cipher.ENCRYPT_MODE, secretKey, iv);
 			
@@ -58,9 +59,9 @@ class StringCipherImpl implements StringCipher {
 	}
 
 	public byte[] tryDecrypt(byte[] encrypted) throws Exception {
-		byte[] iv = Arrays.copyOfRange(encrypted,0,CipherBuilder.keySizeInBits/8);
+		byte[] iv = Arrays.copyOfRange(encrypted,0,KeyTypes.AES.getSizeInBits()/8);
 		byte[] cipherText = Arrays.copyOfRange(encrypted,
-											   CipherBuilder.keySizeInBits/8,
+											   KeyTypes.AES.getSizeInBits()/8,
 											   encrypted.length);
 		try {
 			return decrypt(iv, cipherText);
