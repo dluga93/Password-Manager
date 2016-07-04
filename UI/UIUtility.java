@@ -23,6 +23,15 @@ class UIUtility {
 			if (!MainUI.display.readAndDispatch())
 				MainUI.display.sleep();
 	}
+	
+	public static void startShell(Shell shell, int width, int height) {
+		shell.setSize(width, height);
+		shell.open();
+
+		while (!shell.isDisposed())
+			if (!MainUI.display.readAndDispatch())
+				MainUI.display.sleep();
+	}
 
 	public static void copyToClipboard(String string) {
 		if (string != null) {

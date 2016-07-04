@@ -18,7 +18,7 @@ public class PasswordsHandlerUI {
 
 	public void initializeList(List list) {
 		for (String entry : passwords.getWebsites())
-			list.add(entry);
+			list.add(entry, 0);
 	}
 
 	public void addPasswd(List list) {

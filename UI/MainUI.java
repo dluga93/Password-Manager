@@ -8,7 +8,7 @@ import org.eclipse.swt.layout.*;
 public class MainUI {
 	public static final Display display = new Display();
 	private final Shell shell = new Shell(display);
-	private final List list = new List(shell, SWT.BORDER);
+	private final List list = new List(shell, SWT.V_SCROLL);
 	private final PasswordsHandlerUI passwordHandler;
 
 	public MainUI() {
@@ -20,11 +20,9 @@ public class MainUI {
 		passwordHandler = new PasswordsHandlerUI(passwords);
 		passwordHandler.initializeList(list);
 
-		/* set up SWT */
 		shell.setText("Password Manager");
 		shell.setLayout(new FormLayout());
 		
-		/* make the menu bar */
 		Menu bar = new Menu (shell, SWT.BAR);
 		shell.setMenuBar (bar);
 
@@ -37,10 +35,8 @@ public class MainUI {
 		lay.bottom = new FormAttachment(100,0);
 		lay.right  = new FormAttachment(100,0);
 		list.setLayoutData(lay);
-		
-		/* go */
-		UIUtility.startShell(shell);
 
+		UIUtility.startShell(shell, 250, 150);
 		display.dispose ();
 	}
 
