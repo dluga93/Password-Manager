@@ -16,6 +16,7 @@ public class AuthenticationUI {
 	private static boolean credentialsGiven;
 
 	public static EncryptedMap start() {
+		clearFields();
 		final Shell shell = UIUtility.createShell(new FillLayout());
 		shell.setText("Password Manager");
 
@@ -49,6 +50,14 @@ public class AuthenticationUI {
 
 		UIUtility.startShell(shell);
 		return passwords;
+	}
+
+	// TODO: this is temporary. try making these methods non-static.
+	private static void clearFields() {
+		user = null;
+		password = null;
+		passwords = null;
+		credentialsGiven = false;
 	}
 
 	private static void inputCredentialsDialog() {
