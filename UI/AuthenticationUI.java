@@ -69,9 +69,12 @@ public class AuthenticationUI {
 		final Text tpass  = new Text(shell, SWT.BORDER | SWT.PASSWORD);
 		tpass.setLayoutData(textFieldData);
 
+		Label emptyCell = new Label(shell, SWT.NONE);
+
 		credentialsGiven = false;
 
 		Button submit = new Button(shell, SWT.PUSH);
+		submit.setLayoutData(textFieldData);
 		shell.setDefaultButton(submit);
 		submit.setText("Submit");
 		submit.addListener(SWT.Selection, new Listener() {
