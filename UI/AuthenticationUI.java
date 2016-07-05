@@ -18,10 +18,16 @@ public class AuthenticationUI {
 	private static final GridData textFieldData = new GridData(100, SWT.DEFAULT);
 
 	public EncryptedMap start() {
-		final Shell shell = UIUtility.createShell(new FillLayout());
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 3;
+		layout.makeColumnsEqualWidth = true;
+		GridData buttonGridData = new GridData(80, SWT.DEFAULT);
+
+		final Shell shell = UIUtility.createShell(layout);
 		shell.setText("Password Manager");
 
 		Button login = new Button(shell, SWT.PUSH);
+		login.setLayoutData(buttonGridData);
 		login.setText("Log In\n");
 		login.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
@@ -35,6 +41,7 @@ public class AuthenticationUI {
 		});
 
 		Button register = new Button(shell, SWT.PUSH);
+		register.setLayoutData(buttonGridData);
 		register.setText("Register");
 		register.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
@@ -46,6 +53,15 @@ public class AuthenticationUI {
 					success = tryLogin(user, password);
 				if (success)
 					shell.dispose();
+			}
+		});
+
+		Button exit = new Button(shell, SWT.PUSH);
+		exit.setLayoutData(buttonGridData);
+		exit.setText("Exit");
+		exit.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event e) {
+				shell.dispose();
 			}
 		});
 
@@ -69,6 +85,7 @@ public class AuthenticationUI {
 		final Text tpass  = new Text(shell, SWT.BORDER | SWT.PASSWORD);
 		tpass.setLayoutData(textFieldData);
 
+		@SuppressWarnings("unused")
 		Label emptyCell = new Label(shell, SWT.NONE);
 
 		credentialsGiven = false;
