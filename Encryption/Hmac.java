@@ -8,8 +8,7 @@ import PwdManager.Encryption.CipherBuilder.KeyTypes;
 
 public class Hmac {
 	private final byte[] key;
-	private final static KeyTypes keyType = KeyTypes.HMACSHA1;
-	private final static int HASH_SIZE_IN_BYTES = 20;
+	public final static KeyTypes keyType = KeyTypes.HMACSHA1;
 
 	@SuppressWarnings("serial")
 	public class IntegrityException extends Exception {
@@ -27,8 +26,8 @@ public class Hmac {
 	}
 
 	public Hmac(byte[] key) throws Exception {
-		if (key.length != keyType.getSizeInBits()/8)
-			throw new Exception("Wrong Key Size. " + keyType.getSizeInBits()
+		if (key.length != keyType.sizeInBytes())
+			throw new Exception("Wrong Key Size. " + keyType.sizeInBits()
 								+ " bits expected.");
 
 		this.key = key;
@@ -52,13 +51,13 @@ public class Hmac {
 	}
 
 	public byte[] unmac(byte[] maccedMessage) throws Exception {
-		if (maccedMessage.length <= HASH_SIZE_IN_BYTES)
+		if (maccedMessage.length <= keyType.sizeInBytes())
 			throw new Exception("Corrupted data. Invalid length.");
 
-		byte[] message = new byte[maccedMessage.length - HASH_SIZE_IN_BYTES];
+		byte[] message = new byte[maccedMessage.length - keyType.sizeInBytes()];
 		System.arraycopy(maccedMessage, 0, message, 0, message.length);
 
-		byte[] mac = new byte[HASH_SIZE_IN_BYTES];
+		byte[] mac = new byte[keyType.sizeInBytes()];
 		System.arraycopy(maccedMessage, message.length, mac, 0, mac.length);
 
 		if (!isMacCorrect(message, mac))
@@ -75,9 +74,9 @@ public class Hmac {
 	}
 
 	public static byte[] unwrap(byte[] maccedKey) throws IntegrityException, Exception {
-		byte[] key = new byte[maccedKey.length - HASH_SIZE_IN_BYTES];
+		byte[] key = new byte[maccedKey.length - keyType.sizeInBytes()];
 		System.arraycopy(maccedKey, 0, key, 0, key.length);
-		byte[] mac = new byte[HASH_SIZE_IN_BYTES];
+		byte[] mac = new byte[keyType.sizeInBytes()];
 		System.arraycopy(maccedKey, key.length, mac, 0, mac.length);
 		Hmac hmac = new Hmac(key);
 		if (hmac.isMacCorrect(key, mac))

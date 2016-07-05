@@ -13,21 +13,27 @@ public class CipherBuilder {
 	private static final int pbeIterations = 1000;
 	public static enum KeyTypes {
 		AES("AES", 128),
-		HMACSHA1("HmacSHA1", 128);
+		HMACSHA1("HmacSHA1", 160),
+		HMACSHA256("HMACSHA256", 256),
+		PBKD_HMACSHA1("PBKDF2WithHmacSHA1", 0);
 		private final String type;
-		private final int sizeInBits;
+		private final int keySizeInBits;
 		
 		KeyTypes(String type, int sizeInBits) {
 			this.type = type;
-			this.sizeInBits = sizeInBits;
+			this.keySizeInBits = sizeInBits;
 		}
 
 		public String getType() {
 			return type;
 		}
 
-		public int getSizeInBits() {
-			return sizeInBits;
+		public int sizeInBits() {
+			return keySizeInBits;
+		}
+
+		public int sizeInBytes() {
+			return keySizeInBits/8;
 		}
 	}
 
@@ -78,8 +84,8 @@ public class CipherBuilder {
 	private static SecretKey keyFromPasswordAndSalt(String password, byte[] salt) {
 		try {
 			char[] chars = password.toCharArray();
-			PBEKeySpec spec = new PBEKeySpec(chars, salt, pbeIterations, KeyTypes.AES.getSizeInBits());
-			SecretKeyFactory skf = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
+			PBEKeySpec spec = new PBEKeySpec(chars, salt, pbeIterations, KeyTypes.AES.sizeInBits());
+			SecretKeyFactory skf = SecretKeyFactory.getInstance(KeyTypes.PBKD_HMACSHA1.getType());
 			byte[] secretKeyBytes = skf.generateSecret(spec).getEncoded();
 			return new SecretKeySpec(secretKeyBytes, 0, secretKeyBytes.length, KeyTypes.AES.getType());
 		} catch (Exception e) {
@@ -92,7 +98,7 @@ public class CipherBuilder {
 	public static byte[] generateKey(KeyTypes keyType) {
 		try {
 			KeyGenerator keyGenerator = KeyGenerator.getInstance(keyType.getType());
-			keyGenerator.init(keyType.getSizeInBits());
+			keyGenerator.init(keyType.sizeInBits());
 			return keyGenerator.generateKey().getEncoded();
 		} catch (NoSuchAlgorithmException e) {
 			Logger.logException("Unknown algorithm for key generation.", e);

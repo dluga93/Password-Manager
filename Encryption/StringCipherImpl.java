@@ -39,7 +39,7 @@ class StringCipherImpl implements StringCipher {
 
 	private byte[] ivAndEncrypt(byte[] plaintext) {
 		try {
-			byte[] ivBytes = CipherBuilder.randomData(KeyTypes.AES.getSizeInBits()/8);
+			byte[] ivBytes = CipherBuilder.randomData(KeyTypes.AES.sizeInBytes());
 			IvParameterSpec iv = new IvParameterSpec(ivBytes);
 			cipher.init(Cipher.ENCRYPT_MODE, secretKey, iv);
 			
@@ -59,9 +59,9 @@ class StringCipherImpl implements StringCipher {
 	}
 
 	public byte[] tryDecrypt(byte[] encrypted) throws BadPaddingException, Exception {
-		byte[] iv = Arrays.copyOfRange(encrypted,0,KeyTypes.AES.getSizeInBits()/8);
+		byte[] iv = Arrays.copyOfRange(encrypted,0,KeyTypes.AES.sizeInBytes());
 		byte[] cipherText = Arrays.copyOfRange(encrypted,
-											   KeyTypes.AES.getSizeInBits()/8,
+											   KeyTypes.AES.sizeInBytes(),
 											   encrypted.length);
 		try {
 			return decrypt(iv, cipherText);

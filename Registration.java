@@ -14,7 +14,7 @@ public class Registration {
 	public static void registerUser(String usr, String password)
 	throws FileAlreadyExistsException, Exception {
 		user = usr;
-		byte[] salt = CipherBuilder.randomData(KeyTypes.AES.getSizeInBits()/8);
+		byte[] salt = CipherBuilder.randomData(KeyTypes.AES.sizeInBytes());
 		createKeys(password, salt);
 		tryCreateFiles(salt);
 	}
@@ -23,7 +23,7 @@ public class Registration {
 	public static void registerUser(String usr, String password, byte[] masterKey, byte[] macKey)
 	throws FileAlreadyExistsException, Exception {
 		user = usr;
-		byte[] salt = CipherBuilder.randomData(KeyTypes.AES.getSizeInBits()/8);
+		byte[] salt = CipherBuilder.randomData(KeyTypes.AES.sizeInBytes());
 		StringCipher cipher = CipherBuilder.build(password, salt);
 		Hmac hmac = new Hmac(macKey);
 		masterKey = hmac.mac(masterKey);
@@ -35,7 +35,7 @@ public class Registration {
 
 	private static void createKeys(String password, byte[] salt) throws Exception {
 		byte[] masterKey = CipherBuilder.generateKey(CipherBuilder.KeyTypes.AES);
-		byte[] macKey = CipherBuilder.generateKey(CipherBuilder.KeyTypes.HMACSHA1);
+		byte[] macKey = CipherBuilder.generateKey(Hmac.keyType);
 
 		Hmac hmac = new Hmac(macKey);
 		masterKey = hmac.mac(masterKey);
