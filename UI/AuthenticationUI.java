@@ -15,6 +15,8 @@ public class AuthenticationUI {
 	private EncryptedMap passwords = null;
 	private boolean credentialsGiven = false;
 
+	private static final GridData textFieldData = new GridData(100, SWT.DEFAULT);
+
 	public EncryptedMap start() {
 		final Shell shell = UIUtility.createShell(new FillLayout());
 		shell.setText("Password Manager");
@@ -52,16 +54,20 @@ public class AuthenticationUI {
 	}
 
 	private void inputCredentialsDialog() {
-		final Shell shell = UIUtility.createShell(new FillLayout());
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 2;
+		final Shell shell = UIUtility.createShell(layout);
 		shell.setText("Input Credentials");
 
 		final CLabel userLabel = new CLabel(shell, SWT.CENTER);
 		userLabel.setText("Username: ");
 		final Text tuser  = new Text(shell, SWT.BORDER);
-		
+		tuser.setLayoutData(textFieldData);
+
 		final CLabel passLabel = new CLabel(shell, SWT.CENTER);
 		passLabel.setText("Password: ");
 		final Text tpass  = new Text(shell, SWT.BORDER | SWT.PASSWORD);
+		tpass.setLayoutData(textFieldData);
 
 		credentialsGiven = false;
 
