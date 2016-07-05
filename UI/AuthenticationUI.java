@@ -10,13 +10,12 @@ import org.eclipse.swt.custom.*;
 import java.nio.file.*;
 
 public class AuthenticationUI {
-	private static String user;
-	private static String password;
-	private static EncryptedMap passwords;
-	private static boolean credentialsGiven;
+	private String user;
+	private String password;
+	private EncryptedMap passwords = null;
+	private boolean credentialsGiven = false;
 
-	public static EncryptedMap start() {
-		clearFields();
+	public EncryptedMap start() {
 		final Shell shell = UIUtility.createShell(new FillLayout());
 		shell.setText("Password Manager");
 
@@ -52,15 +51,7 @@ public class AuthenticationUI {
 		return passwords;
 	}
 
-	// TODO: this is temporary. try making these methods non-static.
-	private static void clearFields() {
-		user = null;
-		password = null;
-		passwords = null;
-		credentialsGiven = false;
-	}
-
-	private static void inputCredentialsDialog() {
+	private void inputCredentialsDialog() {
 		final Shell shell = UIUtility.createShell(new FillLayout());
 		shell.setText("Input Credentials");
 
@@ -89,7 +80,7 @@ public class AuthenticationUI {
 		UIUtility.startShell(shell);
 	}
 
-	private static boolean tryLogin(String user, String password) {
+	private boolean tryLogin(String user, String password) {
 		try {
 			passwords = new EncryptedMap(user, password);
 			return true;
@@ -102,7 +93,7 @@ public class AuthenticationUI {
 		}
 	}
 
-	private static boolean tryRegister(String user, String password) {
+	private boolean tryRegister(String user, String password) {
 		try {
 			Registration.registerUser(user, password);
 			return true;

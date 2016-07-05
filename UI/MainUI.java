@@ -17,7 +17,7 @@ public class MainUI {
 		shell = new Shell(display);
 		list = new List(shell, SWT.V_SCROLL);
 
-		EncryptedMap passwords = AuthenticationUI.start();
+		EncryptedMap passwords = new AuthenticationUI().start();
 		if (passwords == null) {
 			passwordHandler = null;
 			return;
