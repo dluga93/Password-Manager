@@ -6,6 +6,7 @@ import PwdManager.Logger;
 import org.eclipse.swt.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.layout.*;
+import org.eclipse.swt.custom.*;
 import java.util.regex.Pattern;
 import java.io.*;
 
@@ -25,7 +26,12 @@ public class PasswordsHandlerUI {
 		final Shell shell = UIUtility.createShell(new FillLayout());
 		shell.setText("Add Password");
 
+		final CLabel siteLabel = new CLabel(shell, SWT.CENTER);
+		siteLabel.setText("Website: ");
 		final Text tsite  = new Text(shell, SWT.BORDER);
+
+		final CLabel passLabel = new CLabel(shell, SWT.CENTER);
+		passLabel.setText("Password: ");
 		final Text tpass  = new Text(shell, SWT.BORDER | SWT.PASSWORD);
 
 		Button add = new Button(shell, SWT.PUSH);
@@ -113,7 +119,12 @@ public class PasswordsHandlerUI {
 		final Shell shell = UIUtility.createShell(new FillLayout());
 		shell.setText("Change Password");
 
+		final CLabel oldPassLabel = new CLabel(shell, SWT.CENTER);
+		oldPassLabel.setText("Old Password: ");
 		final Text oldPass = new Text(shell, SWT.BORDER | SWT.PASSWORD);
+
+		final CLabel newPassLabel = new CLabel(shell, SWT.CENTER);
+		newPassLabel.setText("New Password: ");
 		final Text newPass  = new Text(shell, SWT.BORDER | SWT.PASSWORD);
 
 		Button change = new Button(shell, SWT.PUSH);

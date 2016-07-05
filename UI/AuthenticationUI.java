@@ -6,6 +6,7 @@ import PwdManager.Registration;
 import org.eclipse.swt.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.layout.*;
+import org.eclipse.swt.custom.*;
 import java.nio.file.*;
 
 public class AuthenticationUI {
@@ -54,8 +55,14 @@ public class AuthenticationUI {
 		final Shell shell = UIUtility.createShell(new FillLayout());
 		shell.setText("Input Credentials");
 
+		final CLabel userLabel = new CLabel(shell, SWT.CENTER);
+		userLabel.setText("Username: ");
 		final Text tuser  = new Text(shell, SWT.BORDER);
+		
+		final CLabel passLabel = new CLabel(shell, SWT.CENTER);
+		passLabel.setText("Password: ");
 		final Text tpass  = new Text(shell, SWT.BORDER | SWT.PASSWORD);
+
 		credentialsGiven = false;
 
 		Button submit = new Button(shell, SWT.PUSH);
