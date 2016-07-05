@@ -116,5 +116,8 @@ public class EncryptedMap {
 
 	public void deleteAccount() throws Exception {
 		EncodedFileWriter.deleteFile(Naming.directoryName(user));
+		EncodedFileWriter.deleteFile(Naming.saltFilename(user));
+		EncodedFileWriter.deleteFile(Naming.masterKeyFilename(user));
+		EncodedFileWriter.deleteFile(Naming.macKeyFilename(user));
 	}
 }

@@ -9,7 +9,16 @@ import PwdManager.UI.MainUI;
  * The main client.
  */
 public class Client {
+	private static boolean restart = false;
+
 	public static void main(String[] args) {
-		new MainUI();
+		do {
+			restart = false;
+			new MainUI();
+		} while (restart);
 	}//end main()
+
+	public static void setRestart() {
+		restart = true;
+	}
 }//end class

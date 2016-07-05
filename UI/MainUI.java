@@ -1,17 +1,22 @@
 package PwdManager.UI;
 
 import PwdManager.EncryptedMap;
+import PwdManager.Client;
 import org.eclipse.swt.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.layout.*;
 
 public class MainUI {
-	public static final Display display = new Display();
-	private final Shell shell = new Shell(display);
-	private final List list = new List(shell, SWT.V_SCROLL);
-	private final PasswordsHandlerUI passwordHandler;
+	public static Display display;
+	private Shell shell;
+	private List list;
+	private PasswordsHandlerUI passwordHandler;
 
 	public MainUI() {
+		display = new Display();
+		shell = new Shell(display);
+		list = new List(shell, SWT.V_SCROLL);
+
 		EncryptedMap passwords = AuthenticationUI.start();
 		if (passwords == null) {
 			passwordHandler = null;
@@ -67,7 +72,11 @@ public class MainUI {
 		addMenuPushItem(submenu, "&Delete Account", SWT.NONE,
 			new Listener () {
 				public void handleEvent (Event e) {
-					tryDeleteAccount();
+					boolean success = tryDeleteAccount();
+					if (success) {
+						shell.dispose();
+						Client.setRestart();
+					}
 			}});
 	}
 
