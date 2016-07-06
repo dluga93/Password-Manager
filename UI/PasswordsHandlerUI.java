@@ -23,20 +23,28 @@ public class PasswordsHandlerUI {
 	}
 
 	public void addPasswd(List list) {
-		final Shell shell = UIUtility.createShell(new FillLayout());
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 2;
+
+		final Shell shell = UIUtility.createShell(layout);
 		shell.setText("Add Password");
 
 		final CLabel siteLabel = new CLabel(shell, SWT.CENTER);
 		siteLabel.setText("Website: ");
 		final Text tsite  = new Text(shell, SWT.BORDER);
+		tsite.setLayoutData(UIUtility.textFieldData);
 
 		final CLabel passLabel = new CLabel(shell, SWT.CENTER);
 		passLabel.setText("Password: ");
 		final Text tpass  = new Text(shell, SWT.BORDER | SWT.PASSWORD);
+		tpass.setLayoutData(UIUtility.textFieldData);
+
+		UIUtility.addEmptyCell(shell);
 
 		Button add = new Button(shell, SWT.PUSH);
 		shell.setDefaultButton(add);
 		add.setText("Add");
+		add.setLayoutData(UIUtility.textFieldData);
 		add.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
 				if (list.indexOf(tsite.getText()) != -1) {
@@ -84,20 +92,25 @@ public class PasswordsHandlerUI {
 	public void editEntry(String website) {
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
-		layout.makeColumnsEqualWidth = true;
 		final Shell shell = UIUtility.createShell(layout);
 		shell.setText("Edit Password");
 
 		final Label newPass = new Label(shell, SWT.LEFT);
 		newPass.setText("New password");
 		final Text newPassText = new Text(shell, SWT.BORDER | SWT.PASSWORD);
+		newPassText.setLayoutData(UIUtility.textFieldData);
+
 		final Label confirmPass = new Label(shell, SWT.LEFT);
 		confirmPass.setText("Confirm password");
 		final Text confirmPassText  = new Text(shell, SWT.BORDER | SWT.PASSWORD);
+		confirmPassText.setLayoutData(UIUtility.textFieldData);
+
+		UIUtility.addEmptyCell(shell);
 
 		Button submit = new Button(shell, SWT.PUSH);
 		shell.setDefaultButton(submit);
 		submit.setText("Submit");
+		submit.setLayoutData(UIUtility.textFieldData);
 		submit.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
 				String password1 = newPassText.getText();
@@ -116,19 +129,27 @@ public class PasswordsHandlerUI {
 	}
 
 	public void changeMasterPassword() {
-		final Shell shell = UIUtility.createShell(new FillLayout());
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 2;
+
+		final Shell shell = UIUtility.createShell(layout);
 		shell.setText("Change Password");
 
 		final CLabel oldPassLabel = new CLabel(shell, SWT.CENTER);
 		oldPassLabel.setText("Old Password: ");
 		final Text oldPass = new Text(shell, SWT.BORDER | SWT.PASSWORD);
+		oldPass.setLayoutData(UIUtility.textFieldData);
 
 		final CLabel newPassLabel = new CLabel(shell, SWT.CENTER);
 		newPassLabel.setText("New Password: ");
 		final Text newPass  = new Text(shell, SWT.BORDER | SWT.PASSWORD);
+		newPass.setLayoutData(UIUtility.textFieldData);
+
+		UIUtility.addEmptyCell(shell);
 
 		Button change = new Button(shell, SWT.PUSH);
 		shell.setDefaultButton(change);
+		change.setLayoutData(UIUtility.textFieldData);
 		change.setText("Submit");
 		change.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {

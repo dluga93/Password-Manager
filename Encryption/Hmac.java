@@ -8,7 +8,7 @@ import PwdManager.Encryption.CipherBuilder.KeyTypes;
 
 public class Hmac {
 	private final byte[] key;
-	public final static KeyTypes keyType = KeyTypes.HMACSHA1;
+	public final static KeyTypes keyType = KeyTypes.HMACSHA256;
 
 	@SuppressWarnings("serial")
 	public class IntegrityException extends Exception {

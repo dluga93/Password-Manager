@@ -15,8 +15,6 @@ public class AuthenticationUI {
 	private EncryptedMap passwords = null;
 	private boolean credentialsGiven = false;
 
-	private static final GridData textFieldData = new GridData(100, SWT.DEFAULT);
-
 	public EncryptedMap start() {
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 3;
@@ -78,20 +76,19 @@ public class AuthenticationUI {
 		final CLabel userLabel = new CLabel(shell, SWT.CENTER);
 		userLabel.setText("Username: ");
 		final Text tuser  = new Text(shell, SWT.BORDER);
-		tuser.setLayoutData(textFieldData);
+		tuser.setLayoutData(UIUtility.textFieldData);
 
 		final CLabel passLabel = new CLabel(shell, SWT.CENTER);
 		passLabel.setText("Password: ");
 		final Text tpass  = new Text(shell, SWT.BORDER | SWT.PASSWORD);
-		tpass.setLayoutData(textFieldData);
+		tpass.setLayoutData(UIUtility.textFieldData);
 
-		@SuppressWarnings("unused")
-		Label emptyCell = new Label(shell, SWT.NONE);
+		UIUtility.addEmptyCell(shell);
 
 		credentialsGiven = false;
 
 		Button submit = new Button(shell, SWT.PUSH);
-		submit.setLayoutData(textFieldData);
+		submit.setLayoutData(UIUtility.textFieldData);
 		shell.setDefaultButton(submit);
 		submit.setText("Submit");
 		submit.addListener(SWT.Selection, new Listener() {

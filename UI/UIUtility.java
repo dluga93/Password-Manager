@@ -7,6 +7,7 @@ import org.eclipse.swt.layout.*;
 
 class UIUtility {
 	private static final Clipboard cb = new Clipboard(MainUI.display);
+	public static final GridData textFieldData = new GridData(100, SWT.DEFAULT);
 	public static boolean answeredYes = false;
 
 	public static Shell createShell(Layout layout) {
@@ -90,5 +91,10 @@ class UIUtility {
 		errorBox.setText(title);
 		errorBox.setMessage(message);
 		return errorBox.open();
+	}
+
+	public static void addEmptyCell(Shell shell) {
+		@SuppressWarnings("unused")
+		Label emptyCell = new Label(shell, SWT.NONE);
 	}
 }
