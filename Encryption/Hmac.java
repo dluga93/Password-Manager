@@ -4,7 +4,7 @@ import javax.crypto.*;
 import javax.crypto.spec.*;
 import java.util.*;
 import PwdManager.Logger;
-import PwdManager.Encryption.CipherBuilder.KeyTypes;
+import PwdManager.Encryption.KeyTypes;
 
 public class Hmac {
 	private final byte[] key;

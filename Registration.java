@@ -1,6 +1,6 @@
 package PwdManager;
 import PwdManager.Encryption.StringCipher;
-import PwdManager.Encryption.CipherBuilder.KeyTypes;
+import PwdManager.Encryption.KeyTypes;
 import PwdManager.Encryption.CipherBuilder;
 import PwdManager.Encryption.Hmac;
 import java.nio.file.*;

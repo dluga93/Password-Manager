@@ -1,6 +1,6 @@
 package PwdManager.Encryption;
 import PwdManager.Logger;
-import PwdManager.Encryption.CipherBuilder.KeyTypes;
+import PwdManager.Encryption.KeyTypes;
 
 import java.nio.charset.*;
 import javax.crypto.*;

@@ -7,6 +7,7 @@ import java.nio.file.*;
 import PwdManager.Encryption.StringCipher;
 import PwdManager.Encryption.CipherBuilder;
 import PwdManager.Encryption.Hmac;
+import PwdManager.Encryption.KeyTypes;
 
 public class EncryptedMap {
 	private StringCipher cipher;
@@ -17,7 +18,7 @@ public class EncryptedMap {
 		this.user = user;
 		passwordMap = new HashMap<String, String>();
 
-		byte[] masterKey = new byte[CipherBuilder.KeyTypes.AES.sizeInBytes()];
+		byte[] masterKey = new byte[KeyTypes.AES.sizeInBytes()];
 		byte[] macKey = new byte[Hmac.keyType.sizeInBytes()];
 		readKeys(password, masterKey, macKey);
 
@@ -87,7 +88,7 @@ public class EncryptedMap {
 	}
 
 	public void tryChangeMasterPassword(String oldPass, String newPass) throws Exception {
-		byte[] masterKey = new byte[CipherBuilder.KeyTypes.AES.sizeInBytes()];
+		byte[] masterKey = new byte[KeyTypes.AES.sizeInBytes()];
 		byte[] macKey = new byte[Hmac.keyType.sizeInBytes()];
 		readKeys(oldPass, masterKey, macKey);
 		try {

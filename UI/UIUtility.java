@@ -8,11 +8,13 @@ import org.eclipse.swt.layout.*;
 class UIUtility {
 	private static final Clipboard cb = new Clipboard(MainUI.display);
 	public static final GridData textFieldData = new GridData(100, SWT.DEFAULT);
+	public static final GridData buttonGridData = new GridData(80, SWT.DEFAULT);
 	public static boolean answeredYes = false;
 
-	public static Shell createShell(Layout layout) {
+	public static Shell createShell(Layout layout, String title) {
 		Shell shell = new Shell(MainUI.display);
 		shell.setLayout(layout);
+		shell.setText(title);
 		return shell;
 	}
 
@@ -48,8 +50,7 @@ class UIUtility {
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		layout.makeColumnsEqualWidth = true;
-		final Shell shell = createShell(layout);
-		shell.setText(title);
+		final Shell shell = createShell(layout, title);
 
 		GridData gridData = new GridData();
 		gridData.horizontalAlignment = GridData.CENTER;
@@ -86,7 +87,7 @@ class UIUtility {
 	}
 
 	public static int errorMessage(String title, String message) {
-		final Shell shell = UIUtility.createShell(new FillLayout());
+		final Shell shell = UIUtility.createShell(new FillLayout(), "");
 		MessageBox errorBox = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK | SWT.TITLE);
 		errorBox.setText(title);
 		errorBox.setMessage(message);

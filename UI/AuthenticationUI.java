@@ -10,38 +10,30 @@ import org.eclipse.swt.custom.*;
 import java.nio.file.*;
 
 public class AuthenticationUI {
-	private String user;
-	private String password;
-	private EncryptedMap passwords = null;
-	private boolean credentialsGiven = false;
+	private String user, password;
+	private EncryptedMap passwords;
+	private boolean credentialsGiven;
+	private Shell mainShell, inputShell;
 
 	public EncryptedMap start() {
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 3;
 		layout.makeColumnsEqualWidth = true;
-		GridData buttonGridData = new GridData(80, SWT.DEFAULT);
 
-		final Shell shell = UIUtility.createShell(layout);
-		shell.setText("Password Manager");
+		mainShell = UIUtility.createShell(layout, "Password Manager");
 
-		Button login = new Button(shell, SWT.PUSH);
-		login.setLayoutData(buttonGridData);
-		login.setText("Log In\n");
-		login.addListener(SWT.Selection, new Listener() {
+		makeButton(mainShell, "Log In", new Listener() {
 			public void handleEvent(Event e) {
 				inputCredentialsDialog();
 				if (!credentialsGiven)
 					return;
 				boolean success = tryLogin(user, password);
 				if (success)
-					shell.dispose();
+					mainShell.dispose();
 			}
 		});
 
-		Button register = new Button(shell, SWT.PUSH);
-		register.setLayoutData(buttonGridData);
-		register.setText("Register");
-		register.addListener(SWT.Selection, new Listener() {
+		makeButton(mainShell, "Register", new Listener() {
 			public void handleEvent(Event e) {
 				inputCredentialsDialog();
 				if (!credentialsGiven)
@@ -50,57 +42,61 @@ public class AuthenticationUI {
 				if (success)
 					success = tryLogin(user, password);
 				if (success)
-					shell.dispose();
+					mainShell.dispose();
 			}
 		});
 
-		Button exit = new Button(shell, SWT.PUSH);
-		exit.setLayoutData(buttonGridData);
-		exit.setText("Exit");
-		exit.addListener(SWT.Selection, new Listener() {
+		makeButton(mainShell, "Exit",  new Listener() {
 			public void handleEvent(Event e) {
-				shell.dispose();
+				mainShell.dispose();
 			}
 		});
 
-		UIUtility.startShell(shell);
+		UIUtility.startShell(mainShell);
 		return passwords;
+	}
+
+	// first button created for the shell will be the default button
+	private Button makeButton(Shell shell, String text, Listener listener) {
+		Button button = new Button(shell, SWT.PUSH);
+		button.setLayoutData(UIUtility.buttonGridData);
+		button.setText(text);
+		button.addListener(SWT.Selection, listener);
+		shell.setDefaultButton(button);
+		return button;
 	}
 
 	private void inputCredentialsDialog() {
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
-		final Shell shell = UIUtility.createShell(layout);
-		shell.setText("Input Credentials");
+		inputShell = UIUtility.createShell(layout, "Input Credentials");
 
-		final CLabel userLabel = new CLabel(shell, SWT.CENTER);
-		userLabel.setText("Username: ");
-		final Text tuser  = new Text(shell, SWT.BORDER);
-		tuser.setLayoutData(UIUtility.textFieldData);
+		final Text tuser = labelAndText("Username: ", SWT.BORDER);
+		final Text tpass = labelAndText("Password: ", SWT.BORDER | SWT.PASSWORD);
 
-		final CLabel passLabel = new CLabel(shell, SWT.CENTER);
-		passLabel.setText("Password: ");
-		final Text tpass  = new Text(shell, SWT.BORDER | SWT.PASSWORD);
-		tpass.setLayoutData(UIUtility.textFieldData);
-
-		UIUtility.addEmptyCell(shell);
+		UIUtility.addEmptyCell(inputShell);
 
 		credentialsGiven = false;
 
-		Button submit = new Button(shell, SWT.PUSH);
-		submit.setLayoutData(UIUtility.textFieldData);
-		shell.setDefaultButton(submit);
-		submit.setText("Submit");
-		submit.addListener(SWT.Selection, new Listener() {
+		Button submit = makeButton(inputShell, "Submit", new Listener() {
 			public void handleEvent(Event e) {
 				user = tuser.getText();
 				password = tpass.getText();
 				credentialsGiven = true;
-				shell.dispose();
+				inputShell.dispose();
 			}
 		});
+		submit.setLayoutData(UIUtility.textFieldData);
 
-		UIUtility.startShell(shell);
+		UIUtility.startShell(inputShell);
+	}
+
+	private Text labelAndText(String labelText, int textFlags) {
+		final CLabel label = new CLabel(inputShell, SWT.CENTER);
+		label.setText(labelText);
+		final Text textField = new Text(inputShell, textFlags);
+		textField.setLayoutData(UIUtility.textFieldData);
+		return textField;
 	}
 
 	private boolean tryLogin(String user, String password) {

@@ -26,8 +26,7 @@ public class PasswordsHandlerUI {
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 
-		final Shell shell = UIUtility.createShell(layout);
-		shell.setText("Add Password");
+		final Shell shell = UIUtility.createShell(layout, "Add Password");
 
 		final CLabel siteLabel = new CLabel(shell, SWT.CENTER);
 		siteLabel.setText("Website: ");
@@ -92,8 +91,7 @@ public class PasswordsHandlerUI {
 	public void editEntry(String website) {
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
-		final Shell shell = UIUtility.createShell(layout);
-		shell.setText("Edit Password");
+		final Shell shell = UIUtility.createShell(layout, "Edit Password");
 
 		final Label newPass = new Label(shell, SWT.LEFT);
 		newPass.setText("New password");
@@ -132,8 +130,7 @@ public class PasswordsHandlerUI {
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 
-		final Shell shell = UIUtility.createShell(layout);
-		shell.setText("Change Password");
+		final Shell shell = UIUtility.createShell(layout, "Change Password");
 
 		final CLabel oldPassLabel = new CLabel(shell, SWT.CENTER);
 		oldPassLabel.setText("Old Password: ");
