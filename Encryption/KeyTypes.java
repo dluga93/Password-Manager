@@ -5,6 +5,7 @@ public enum KeyTypes {
 	HMACSHA1("HmacSHA1", 160),
 	HMACSHA256("HMACSHA256", 256),
 	PBKD_HMACSHA1("PBKDF2WithHmacSHA1", 0);
+
 	private final String type;
 	private final int keySizeInBits;
 	

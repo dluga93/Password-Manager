@@ -13,9 +13,7 @@ class StringCipherImpl implements StringCipher {
 	private final Hmac hmac;
 
 	public StringCipherImpl(Cipher cipher, SecretKey secretKey) {
-		this.cipher = cipher;
-		this.secretKey = secretKey;
-		this.hmac = null;
+		this(cipher, secretKey, null);
 	}
 
 	public StringCipherImpl(Cipher cipher, SecretKey secretKey, Hmac hmac) {
