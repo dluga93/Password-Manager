@@ -10,11 +10,12 @@ import java.io.*;
 public class CipherBuilder {
 	private static final String cipherInitString = "AES/CBC/PKCS5Padding";
 	private static final int pbeIterations = 1000;
+	public static final KeyTypes encryptionKeyType = KeyTypes.AES128;
 
 	public static StringCipher build(byte[] keyBytes, byte[] macBytes) throws Exception {
 		Cipher cipher = createCipher();
 		SecretKey secretKey = new SecretKeySpec(keyBytes, 0, keyBytes.length,
-												KeyTypes.AES.getType());
+												encryptionKeyType.getType());
 		Hmac hmac = new Hmac(macBytes);
 		return new StringCipherImpl(cipher, secretKey, hmac);
 	}
@@ -58,10 +59,10 @@ public class CipherBuilder {
 	private static SecretKey keyFromPasswordAndSalt(String password, byte[] salt) {
 		try {
 			char[] chars = password.toCharArray();
-			PBEKeySpec spec = new PBEKeySpec(chars, salt, pbeIterations, KeyTypes.AES.sizeInBits());
+			PBEKeySpec spec = new PBEKeySpec(chars, salt, pbeIterations, encryptionKeyType.sizeInBits());
 			SecretKeyFactory skf = SecretKeyFactory.getInstance(KeyTypes.PBKD_HMACSHA1.getType());
 			byte[] secretKeyBytes = skf.generateSecret(spec).getEncoded();
-			return new SecretKeySpec(secretKeyBytes, 0, secretKeyBytes.length, KeyTypes.AES.getType());
+			return new SecretKeySpec(secretKeyBytes, 0, secretKeyBytes.length, encryptionKeyType.getType());
 		} catch (Exception e) {
 			Logger.logException("Problem with creating master key from password and salt.", e);
 			System.exit(1);

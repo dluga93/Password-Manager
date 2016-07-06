@@ -1,6 +1,5 @@
 package PwdManager.Encryption;
 import PwdManager.Logger;
-import PwdManager.Encryption.KeyTypes;
 
 import java.nio.charset.*;
 import javax.crypto.*;
@@ -39,7 +38,7 @@ class StringCipherImpl implements StringCipher {
 
 	private byte[] ivAndEncrypt(byte[] plaintext) {
 		try {
-			byte[] ivBytes = CipherBuilder.randomData(KeyTypes.AES.sizeInBytes());
+			byte[] ivBytes = CipherBuilder.randomData(CipherBuilder.encryptionKeyType.sizeInBytes());
 			IvParameterSpec iv = new IvParameterSpec(ivBytes);
 			cipher.init(Cipher.ENCRYPT_MODE, secretKey, iv);
 			
@@ -59,9 +58,9 @@ class StringCipherImpl implements StringCipher {
 	}
 
 	public byte[] tryDecrypt(byte[] encrypted) throws BadPaddingException, Exception {
-		byte[] iv = Arrays.copyOfRange(encrypted,0,KeyTypes.AES.sizeInBytes());
+		byte[] iv = Arrays.copyOfRange(encrypted,0,CipherBuilder.encryptionKeyType.sizeInBytes());
 		byte[] cipherText = Arrays.copyOfRange(encrypted,
-											   KeyTypes.AES.sizeInBytes(),
+											   CipherBuilder.encryptionKeyType.sizeInBytes(),
 											   encrypted.length);
 		try {
 			return decrypt(iv, cipherText);

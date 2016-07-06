@@ -1,6 +1,5 @@
 package PwdManager;
 import PwdManager.Encryption.StringCipher;
-import PwdManager.Encryption.KeyTypes;
 import PwdManager.Encryption.CipherBuilder;
 import PwdManager.Encryption.Hmac;
 import java.nio.file.*;
@@ -33,7 +32,7 @@ public class Registration {
 	}
 
 	private void createKeys() {
-		masterKey = CipherBuilder.generateKey(KeyTypes.AES);
+		masterKey = CipherBuilder.generateKey(CipherBuilder.encryptionKeyType);
 		macKey = CipherBuilder.generateKey(Hmac.keyType);
 	}
 

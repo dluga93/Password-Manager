@@ -1,7 +1,7 @@
 package PwdManager.Encryption;
 
 public enum KeyTypes {
-	AES("AES", 128),
+	AES128("AES", 128),
 	HMACSHA1("HmacSHA1", 160),
 	HMACSHA256("HMACSHA256", 256),
 	PBKD_HMACSHA1("PBKDF2WithHmacSHA1", 0);
