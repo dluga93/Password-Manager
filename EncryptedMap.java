@@ -28,7 +28,7 @@ public class EncryptedMap {
 	private void readKeys(String password, byte[] masterKey, byte[] macKey) throws Exception {
 		byte[] maccedMacKey = tryReadKey(password, Naming.macKeyFilename(user));
 		macKey = Hmac.unwrap(maccedMacKey);
-		
+
 		Hmac hmac = new Hmac(macKey);
 		byte[] maccedMasterKey = tryReadKey(password, Naming.masterKeyFilename(user));
 		masterKey = hmac.unmac(maccedMasterKey);
