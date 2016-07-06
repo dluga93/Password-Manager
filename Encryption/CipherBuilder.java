@@ -1,7 +1,6 @@
 package PwdManager.Encryption;
 import PwdManager.Logger;
 import PwdManager.EncodedFileReader;
-import PwdManager.Naming;
 
 import javax.crypto.*;
 import javax.crypto.spec.*;
@@ -45,9 +44,9 @@ public class CipherBuilder {
 		return new StringCipherImpl(cipher, secretKey, hmac);
 	}
 
-	public static StringCipher build(String user, String password) throws Exception {
+	public static StringCipher build(String saltFilename, String password) throws Exception {
 		Cipher cipher = createCipher();
-		byte[] salt = readSaltFromFile(user);
+		byte[] salt = readSaltFromFile(saltFilename);
 		SecretKey secretKey = keyFromPasswordAndSalt(password, salt);
 		return new StringCipherImpl(cipher, secretKey);
 	}
@@ -68,9 +67,9 @@ public class CipherBuilder {
 		return null;
 	}
 
-	private static byte[] readSaltFromFile(String user) throws Exception {
+	private static byte[] readSaltFromFile(String saltFilename) throws Exception {
 		try {
-			EncodedFileReader fileReader = new EncodedFileReader(Naming.saltFilename(user));
+			EncodedFileReader fileReader = new EncodedFileReader(saltFilename);
 			byte[] salt = fileReader.readData();
 			fileReader.close();
 			return salt;

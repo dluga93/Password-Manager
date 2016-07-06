@@ -7,48 +7,56 @@ import java.nio.file.*;
 import java.io.*;
 
 public class Registration {
-	private static byte[] encryptedMasterKey;
-	private static byte[] encryptedMacKey;
-	private static String user;
+	private static final int SALT_LENGTH = 32; // bytes
+	private byte[] encryptedMasterKey;
+	private byte[] encryptedMacKey;
+	private byte[] masterKey;
+	private byte[] macKey;
+	private String user;
 
-	public static void registerUser(String usr, String password)
+	public Registration(String usr, String password)
 	throws FileAlreadyExistsException, Exception {
 		user = usr;
-		byte[] salt = CipherBuilder.randomData(KeyTypes.AES.sizeInBytes());
-		createKeys(password, salt);
-		tryCreateFiles(salt);
+		createKeys();
+		createPasswordDirectory();
+		encryptAndStoreKeys(password);
 	}
 
 	// register with a preset master and mac key
-	public static void registerUser(String usr, String password, byte[] masterKey, byte[] macKey)
+	public Registration(String usr, String password, byte[] masterKey, byte[] macKey)
 	throws FileAlreadyExistsException, Exception {
 		user = usr;
-		byte[] salt = CipherBuilder.randomData(KeyTypes.AES.sizeInBytes());
-		StringCipher cipher = CipherBuilder.build(password, salt);
+		this.masterKey = masterKey;
+		this.macKey = macKey;
+
+		encryptAndStoreKeys(password);
+	}
+
+	private void createKeys() {
+		masterKey = CipherBuilder.generateKey(KeyTypes.AES);
+		macKey = CipherBuilder.generateKey(Hmac.keyType);
+	}
+
+	private void encryptAndStoreKeys(String password) throws Exception {
+		byte[] masterKeySalt = CipherBuilder.randomData(SALT_LENGTH);
+		byte[] macKeySalt = CipherBuilder.randomData(SALT_LENGTH);
+
 		Hmac hmac = new Hmac(macKey);
 		masterKey = hmac.mac(masterKey);
 		macKey = hmac.mac(macKey);
-		encryptedMasterKey = cipher.tryEncrypt(masterKey);
-		encryptedMacKey = cipher.tryEncrypt(macKey);
-		tryCreateFiles(salt);
+
+		StringCipher masterKeyCipher = CipherBuilder.build(password, masterKeySalt);
+		encryptedMasterKey = masterKeyCipher.tryEncrypt(masterKey);
+		StringCipher macKeyCipher = CipherBuilder.build(password, macKeySalt);
+		encryptedMacKey = macKeyCipher.tryEncrypt(macKey);
+
+		tryCreateFiles(masterKeySalt, macKeySalt);
 	}
 
-	private static void createKeys(String password, byte[] salt) throws Exception {
-		byte[] masterKey = CipherBuilder.generateKey(CipherBuilder.KeyTypes.AES);
-		byte[] macKey = CipherBuilder.generateKey(Hmac.keyType);
-
-		Hmac hmac = new Hmac(macKey);
-		masterKey = hmac.mac(masterKey);
-		macKey = hmac.mac(macKey);
-		
-		StringCipher cipher = CipherBuilder.build(password, salt);
-		encryptedMasterKey = cipher.tryEncrypt(masterKey);
-		encryptedMacKey = cipher.tryEncrypt(macKey);
-	}
-
-	private static void tryCreateFiles(byte[] salt) throws FileAlreadyExistsException {
+	private void tryCreateFiles(byte[] masterKeySalt, byte[] macKeySalt)
+	throws FileAlreadyExistsException {
 		try {
-			createFiles(salt);
+			createFiles(masterKeySalt, macKeySalt);
 		} catch (FileAlreadyExistsException e) {
 			throw e;
 		} catch (Exception e) {
@@ -57,14 +65,15 @@ public class Registration {
 		}
 	}
 
-	private static void createFiles(byte[] salt) throws FileAlreadyExistsException, Exception {
-		createPasswordDirectory();
-		saveDataToFile(salt, Naming.saltFilename(user));
+	private void createFiles(byte[] masterKeySalt, byte[] macKeySalt)
+	throws FileAlreadyExistsException, Exception {
+		saveDataToFile(masterKeySalt, Naming.masterSaltFilename(user));
+		saveDataToFile(macKeySalt, Naming.macSaltFilename(user));
 		saveDataToFile(encryptedMasterKey, Naming.masterKeyFilename(user));
 		saveDataToFile(encryptedMacKey, Naming.macKeyFilename(user));
 	}
 
-	private static void saveDataToFile(byte[] data, String filename) throws Exception {
+	private void saveDataToFile(byte[] data, String filename) throws Exception {
 		try {
 			EncodedFileWriter fileWriter = new EncodedFileWriter(filename);
 			fileWriter.writeData(data);
@@ -74,7 +83,7 @@ public class Registration {
 		}
 	}
 
-	private static void createPasswordDirectory() throws FileAlreadyExistsException, Exception {
+	private void createPasswordDirectory() throws FileAlreadyExistsException, Exception {
 		String directoryName = Naming.directoryName(user);
 		try {
 			Files.createDirectory(Paths.get(directoryName));

@@ -118,7 +118,7 @@ public class AuthenticationUI {
 
 	private boolean tryRegister(String user, String password) {
 		try {
-			Registration.registerUser(user, password);
+			new Registration(user, password);
 			return true;
 		} catch (FileAlreadyExistsException e) {
 			UIUtility.errorMessage("Registration.", "User " + user + " already exists.");

@@ -17,15 +17,21 @@ public class EncryptedMap {
 		this.user = user;
 		passwordMap = new HashMap<String, String>();
 
+		byte[] masterKey = new byte[CipherBuilder.KeyTypes.AES.sizeInBytes()];
+		byte[] macKey = new byte[Hmac.keyType.sizeInBytes()];
+		readKeys(password, masterKey, macKey);
+
+		cipher = CipherBuilder.build(masterKey, macKey);
+		tryReadPasswords(cipher);
+	}
+
+	private void readKeys(String password, byte[] masterKey, byte[] macKey) throws Exception {
 		byte[] maccedMacKey = tryReadKey(password, Naming.macKeyFilename(user));
-		byte[] macKey = Hmac.unwrap(maccedMacKey);
+		macKey = Hmac.unwrap(maccedMacKey);
 		
 		Hmac hmac = new Hmac(macKey);
 		byte[] maccedMasterKey = tryReadKey(password, Naming.masterKeyFilename(user));
-		byte[] masterKey = hmac.unmac(maccedMasterKey);
-		
-		cipher = CipherBuilder.build(masterKey, macKey);
-		tryReadPasswords(cipher);
+		masterKey = hmac.unmac(maccedMasterKey);
 	}
 
 	private byte[] tryReadKey(String password, String filename) throws Exception {
@@ -44,7 +50,12 @@ public class EncryptedMap {
 		byte[] encryptedKey = fileReader.readData();
 		fileReader.close();
 
-		StringCipher keyDecrypter = CipherBuilder.build(user, password);
+		StringCipher keyDecrypter = null;
+		if (filename.equals(Naming.masterKeyFilename(user)))
+			keyDecrypter = CipherBuilder.build(Naming.masterSaltFilename(user), password);
+		else
+			keyDecrypter = CipherBuilder.build(Naming.macSaltFilename(user), password);
+
 		byte[] key = keyDecrypter.tryDecrypt(encryptedKey);
 		return key;
 	}
@@ -76,10 +87,11 @@ public class EncryptedMap {
 	}
 
 	public void tryChangeMasterPassword(String oldPass, String newPass) throws Exception {
-		byte[] masterKey = tryReadKey(oldPass, Naming.masterKeyFilename(user));
-		byte[] macKey = tryReadKey(oldPass, Naming.macKeyFilename(user));
+		byte[] masterKey = new byte[CipherBuilder.KeyTypes.AES.sizeInBytes()];
+		byte[] macKey = new byte[Hmac.keyType.sizeInBytes()];
+		readKeys(oldPass, masterKey, macKey);
 		try {
-			Registration.registerUser(user, newPass, masterKey, macKey);
+			new Registration(user, newPass, masterKey, macKey);
 		} catch (FileAlreadyExistsException e) {
 			// supposed to happen because password folder already exists. ignore
 		}
@@ -116,7 +128,8 @@ public class EncryptedMap {
 
 	public void deleteAccount() throws Exception {
 		EncodedFileWriter.deleteFile(Naming.directoryName(user));
-		EncodedFileWriter.deleteFile(Naming.saltFilename(user));
+		EncodedFileWriter.deleteFile(Naming.masterSaltFilename(user));
+		EncodedFileWriter.deleteFile(Naming.macSaltFilename(user));
 		EncodedFileWriter.deleteFile(Naming.masterKeyFilename(user));
 		EncodedFileWriter.deleteFile(Naming.macKeyFilename(user));
 	}
