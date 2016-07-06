@@ -12,17 +12,6 @@ public class Hmac {
 
 	@SuppressWarnings("serial")
 	public class IntegrityException extends Exception {
-		public IntegrityException() {
-			super();
-		}
-
-		public IntegrityException(String message) {
-			super(message);
-		}
-
-		public IntegrityException(String message, Throwable cause) {
-			super(message, cause);
-		}
 	}
 
 	public Hmac(byte[] key) throws Exception {
