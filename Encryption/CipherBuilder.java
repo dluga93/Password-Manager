@@ -21,10 +21,8 @@ public class CipherBuilder {
 	}
 
 	public static StringCipher build(String saltFilename, String password) throws Exception {
-		Cipher cipher = createCipher();
 		byte[] salt = readSaltFromFile(saltFilename);
-		SecretKey secretKey = keyFromPasswordAndSalt(password, salt);
-		return new StringCipherImpl(cipher, secretKey);
+		return build(password, salt);
 	}
 
 	public static StringCipher build(String password, byte[] salt) {
