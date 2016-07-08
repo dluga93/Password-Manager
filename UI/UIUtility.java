@@ -104,7 +104,7 @@ class UIUtility {
 		final CLabel label = new CLabel(shell, SWT.CENTER);
 		label.setText(labelText);
 		final Text textField = new Text(shell, textFlags);
-		textField.setLayoutData(UIUtility.textFieldData);
+		textField.setLayoutData(textFieldData);
 		return textField;
 	}
 }

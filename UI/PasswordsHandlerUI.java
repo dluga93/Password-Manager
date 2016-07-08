@@ -6,7 +6,6 @@ import PwdManager.Logger;
 import org.eclipse.swt.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.layout.*;
-import org.eclipse.swt.custom.*;
 import java.util.regex.Pattern;
 import java.io.*;
 
@@ -28,16 +27,8 @@ public class PasswordsHandlerUI {
 
 		final Shell shell = UIUtility.createShell(layout, "Add Password");
 
-		final CLabel siteLabel = new CLabel(shell, SWT.CENTER);
-		siteLabel.setText("Website: ");
-		final Text tsite  = new Text(shell, SWT.BORDER);
-		tsite.setLayoutData(UIUtility.textFieldData);
-
-		final CLabel passLabel = new CLabel(shell, SWT.CENTER);
-		passLabel.setText("Password: ");
-		final Text tpass  = new Text(shell, SWT.BORDER | SWT.PASSWORD);
-		tpass.setLayoutData(UIUtility.textFieldData);
-
+		final Text tsite = UIUtility.labelAndText(shell, "Website: ", SWT.BORDER);
+		final Text tpass = UIUtility.labelAndText(shell, "Password: ", SWT.BORDER | SWT.PASSWORD);
 		UIUtility.addEmptyCell(shell);
 
 		Button add = new Button(shell, SWT.PUSH);
@@ -93,16 +84,8 @@ public class PasswordsHandlerUI {
 		layout.numColumns = 2;
 		final Shell shell = UIUtility.createShell(layout, "Edit Password");
 
-		final Label newPass = new Label(shell, SWT.LEFT);
-		newPass.setText("New password");
-		final Text newPassText = new Text(shell, SWT.BORDER | SWT.PASSWORD);
-		newPassText.setLayoutData(UIUtility.textFieldData);
-
-		final Label confirmPass = new Label(shell, SWT.LEFT);
-		confirmPass.setText("Confirm password");
-		final Text confirmPassText  = new Text(shell, SWT.BORDER | SWT.PASSWORD);
-		confirmPassText.setLayoutData(UIUtility.textFieldData);
-
+		final Text newPassText = UIUtility.labelAndText(shell, "New Password: ", SWT.BORDER | SWT.PASSWORD);
+		final Text confirmPassText = UIUtility.labelAndText(shell, "Confirm Password: ", SWT.BORDER | SWT.PASSWORD);
 		UIUtility.addEmptyCell(shell);
 
 		Button submit = new Button(shell, SWT.PUSH);
@@ -132,16 +115,9 @@ public class PasswordsHandlerUI {
 
 		final Shell shell = UIUtility.createShell(layout, "Change Password");
 
-		final CLabel oldPassLabel = new CLabel(shell, SWT.CENTER);
-		oldPassLabel.setText("Old Password: ");
-		final Text oldPass = new Text(shell, SWT.BORDER | SWT.PASSWORD);
-		oldPass.setLayoutData(UIUtility.textFieldData);
-
-		final CLabel newPassLabel = new CLabel(shell, SWT.CENTER);
-		newPassLabel.setText("New Password: ");
-		final Text newPass  = new Text(shell, SWT.BORDER | SWT.PASSWORD);
-		newPass.setLayoutData(UIUtility.textFieldData);
-
+		// TODO: check what error we get if we input the wrong old password
+		final Text oldPass = UIUtility.labelAndText(shell, "Old Password: ", SWT.BORDER | SWT.PASSWORD);
+		final Text newPass = UIUtility.labelAndText(shell, "New Password: ", SWT.BORDER | SWT.PASSWORD);
 		UIUtility.addEmptyCell(shell);
 
 		Button change = new Button(shell, SWT.PUSH);
