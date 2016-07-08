@@ -14,7 +14,7 @@ public class MainUI {
 
 	public MainUI() {
 		display = new Display();
-		shell = new Shell(display);
+		shell = UIUtility.createShell(new FormLayout(), "Password Manager");
 		list = new List(shell, SWT.V_SCROLL);
 
 		EncryptedMap passwords = new AuthenticationUI().start();
@@ -25,11 +25,8 @@ public class MainUI {
 		passwordHandler = new PasswordsHandlerUI(passwords);
 		passwordHandler.initializeList(list);
 
-		shell.setText("Password Manager");
-		shell.setLayout(new FormLayout());
-		
-		Menu bar = new Menu (shell, SWT.BAR);
-		shell.setMenuBar (bar);
+		Menu bar = new Menu(shell, SWT.BAR);
+		shell.setMenuBar(bar);
 
 		makeFileMenu(bar);
 		makeEditMenu(bar);

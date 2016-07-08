@@ -4,6 +4,7 @@ import org.eclipse.swt.*;
 import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.layout.*;
+import org.eclipse.swt.custom.*;
 
 class UIUtility {
 	private static final Clipboard cb = new Clipboard(MainUI.display);
@@ -97,5 +98,13 @@ class UIUtility {
 	public static void addEmptyCell(Shell shell) {
 		@SuppressWarnings("unused")
 		Label emptyCell = new Label(shell, SWT.NONE);
+	}
+
+	public static Text labelAndText(Shell shell, String labelText, int textFlags) {
+		final CLabel label = new CLabel(shell, SWT.CENTER);
+		label.setText(labelText);
+		final Text textField = new Text(shell, textFlags);
+		textField.setLayoutData(UIUtility.textFieldData);
+		return textField;
 	}
 }
