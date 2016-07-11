@@ -20,7 +20,12 @@ public class EncodedFileWriter {
 
 	public void writeData(byte[] data) throws IOException {
 		byte[] encoded = encodeBytes(data);
-		fileOutStream.write(encoded);
+		try {
+			fileOutStream.write(encoded);
+		} catch (IOException e) {
+			fileOutStream.close();
+			throw e;
+		}
 	}
 
 	private byte[] encodeBytes(byte[] bytes) {
