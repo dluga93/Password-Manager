@@ -16,6 +16,7 @@ public class Registration {
 	public Registration(String usr, String password)
 	throws FileAlreadyExistsException, Exception {
 		user = usr;
+		assertValidPassword(password);
 		createKeys();
 		createPasswordDirectory();
 		encryptAndStoreKeys(password);
@@ -29,6 +30,11 @@ public class Registration {
 		this.macKey = macKey;
 
 		encryptAndStoreKeys(password);
+	}
+
+	private void assertValidPassword(String password) throws Exception {
+		if (password.length() < 8)
+			throw new Exception("Your password must be at least 8 characters long.");
 	}
 
 	private void createKeys() {
