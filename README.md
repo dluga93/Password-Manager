@@ -38,10 +38,18 @@ The other four files contain:
 
 The master and hmac keys are encrypted with a third key generated from the stored salt and the master password using <a href="https://en.wikipedia.org/wiki/PBKDF2">PBKDF2</a> with HMAC-SHA1. If the user wants to change the master password, the application only re-encrypts the master and hmac keys, and doesn't need to change the stored website passwords.
 
-## Build
+## Build and Run
 
-The application was developped using Java and SWT for the user interface. You can download the source code, put it into a *PwdManager* directory, and add the files in a project in the Eclipse IDE. You also need to download the <a href="http://www.eclipse.org/swt/">SWT</a> (I'm using version 4.5), import it in Eclipse, and add it to the PwdManager project's build path.
+The application was developped using Java and SWT for the user interface. You can download the source code, put it into a *PwdManager* directory, and add the files in a project in the Eclipse IDE. You also need to get <a href="http://www.eclipse.org/swt/">SWT</a>. Make sure it matches your JVM; they should both be 64-bit or 32-bit. Next put the .jar file in the classpath when building and running the application.
 
-To add a project to the build path, right-click the project's name in the Package Explorer and go to **Properties**. Click Java Build Path on the left, go to the Projects tab, and click **Add**. In the window that opens, you select the SWT project and click OK.
+Example building and running from the command line:
+
+To build:<br>
+<code>javac -cp swt.jar:. PwdManager/Client.java</code>
+
+To run:<br>
+<code>java -cp swt.jar:. PwdManager.Client</code>
+
+Assuming the PwdManager folder is in the current directory and contains the code.
 
 That's it. Just make sure you got the SWT version that matches your JVM. They should both be 64-bit or 32-bit.
