@@ -38,7 +38,7 @@ public class MainUI {
 		lay.right  = new FormAttachment(100,0);
 		list.setLayoutData(lay);
 
-		UIUtility.startShell(shell, 250, 150);
+		UIUtility.startShell(shell, 300, 200);
 		display.dispose ();
 	}
 

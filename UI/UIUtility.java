@@ -8,7 +8,7 @@ import org.eclipse.swt.custom.*;
 
 class UIUtility {
 	private static final Clipboard cb = new Clipboard(MainUI.display);
-	public static final GridData textFieldData = new GridData(100, SWT.DEFAULT);
+	public static final GridData textFieldData = new GridData(150, SWT.DEFAULT);
 	public static final GridData buttonGridData = new GridData(80, SWT.DEFAULT);
 	public static boolean answeredYes = false;
 
