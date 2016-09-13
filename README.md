@@ -40,16 +40,14 @@ The master and hmac keys are encrypted with a third key generated from the store
 
 ## Build and Run
 
-The application was developped using Java and SWT for the user interface. You can download the source code, put it into a *PwdManager* directory, and add the files in a project in the Eclipse IDE. You also need to get <a href="http://www.eclipse.org/swt/">SWT</a>. Make sure it matches your JVM; they should both be 64-bit or 32-bit. Next put the .jar file in the classpath when building and running the application.
+The application was developped using Java and SWT for the user interface. You can download the source code, extract it and rename the directory to *Password_Manager*. You will need to get <a href="http://www.eclipse.org/swt/">SWT</a>. Make sure it matches your JVM; they should both be 64-bit or 32-bit. Finally put the .jar file in the classpath when building and running the application.
 
 Example building and running from the command line:
 
 To build:<br>
-<code>javac -cp swt.jar:. PwdManager/Client.java</code>
+<code>javac -cp swt.jar:. Password_Manager/Client.java</code>
 
 To run:<br>
-<code>java -cp swt.jar:. PwdManager.Client</code>
-
-Assuming the PwdManager folder is in the current directory and contains the code.
+<code>java -cp swt.jar:. Password_Manager.Client</code>
 
 That's it. Just make sure you got the SWT version that matches your JVM. They should both be 64-bit or 32-bit.
