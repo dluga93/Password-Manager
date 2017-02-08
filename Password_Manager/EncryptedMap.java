@@ -32,13 +32,13 @@ public class EncryptedMap {
 	    fileReader = new EncodedFileReader(keyFilename);
 
 	    byte[] encryptedMacKey = fileReader.readData();
-	    keyDecrypter =
+	    StringCipher keyDecrypter =
 	    	CipherBuilder.build(Naming.macSaltFilename(user), password);
 	    byte[] maccedMacKey = keyDecrypter.tryDecrypt(encryptedMacKey);
 	    macKey = Hmac.unwrap(maccedMacKey);
 
 	    byte[] encryptedMasterKey = fileReader.readData();
-	    StringCipher keyDecrypter =
+	    keyDecrypter =
 	    	CipherBuilder.build(Naming.masterSaltFilename(user), password);
 	    byte[] maccedMasterKey = keyDecrypter.tryDecrypt(encryptedMasterKey);
 	    masterKey = Hmac.unwrap(maccedMasterKey);
