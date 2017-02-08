@@ -11,6 +11,7 @@ import Password_Manager.Encryption.Hmac;
 public class EncryptedMap {
 	private StringCipher cipher;
 	private HashMap<String, String> passwordMap;
+	private EncodedFileReader fileReader;
 	private final String user;
 
 	public EncryptedMap(String user, String password) throws Hmac.IntegrityException, Exception {
