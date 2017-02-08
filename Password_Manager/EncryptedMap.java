@@ -26,6 +26,25 @@ public class EncryptedMap {
 		tryReadPasswords(cipher);
 	}
 
+	private void tryReadKeys(String password, byte[] masterKey, byte[] macKey) 
+	throws Exception {
+		String keyFilename = Naming.keyFileName(user);
+		try {
+			readKeys2(password, masterKey, macKey);
+		} catch (FileNotFoundException e) {
+			throw new Exception("Key file " + keyFilename +
+				" not found.");
+		} catch (EOFException e) {
+			throw new Exception("End of key file " + keyFilename +
+				" reached prematurely. The file might be corrupted.");
+		} catch (IOException e) {
+			throw new Exception("Could not read from file " + keyFilename + ".");
+		} catch (Hmac.IntegrityException e) {
+			throw new Exception("Wrong password or key file " + keyFilename +
+				" is corrupted.");
+		}
+	}
+
 	private void readKeys2(String password, byte[] masterKey, byte[] macKey)
 	throws Exception {
 	    String keyFilename = Naming.keyFileName(user);
