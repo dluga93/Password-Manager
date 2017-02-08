@@ -26,6 +26,24 @@ public class EncryptedMap {
 		tryReadPasswords(cipher);
 	}
 
+	private void readKeys2(String password, byte[] masterKey, byte[] macKey)
+	throws Exception {
+	    String keyFilename = Naming.keyFileName(user);
+	    fileReader = new EncodedFileReader(keyFilename);
+
+	    byte[] encryptedMasterKey = fileReader.readData();
+	    StringCipher keyDecrypter =
+	    	CipherBuilder.build(Naming.masterSaltFilename(user), password);
+	    masterKey = keyDecrypter.tryDecrypt(encryptedMasterKey);
+
+	    byte[] encryptedMacKey = fileReader.readData();
+	    keyDecrypter =
+	    	CipherBuilder.build(Naming.macSaltFilename(user), password);
+	    macKey = keyDecrypter.tryDecrypt(encryptedMacKey);
+
+	    fileReader.close();
+	}
+
 	private void readKeys(String password, byte[] masterKey, byte[] macKey) throws Exception {
 		byte[] maccedMacKey = tryReadKey(password, Naming.macKeyFilename(user));
 		macKey = Hmac.unwrap(maccedMacKey);
