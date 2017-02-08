@@ -18,10 +18,13 @@ public class EncryptedMap {
 		this.user = user;
 		passwordMap = new HashMap<String, String>();
 
-		byte[] masterKey = new byte[CipherBuilder.encryptionKeyType.sizeInBytes()];
-		byte[] macKey = new byte[Hmac.keyType.sizeInBytes()];
-		tryReadKeys(password, masterKey, macKey);
+		int masterKeySize = CipherBuilder.encryptionKeyType.sizeInBytes();
+		byte[] masterKey = new byte[masterKeySize];
 
+		int macKeySize = CipherBuilder.encryptionKeyType.sizeInBytes();
+		byte[] macKey = new byte[macKeySize];
+
+		tryReadKeys(password, masterKey, macKey);
 		cipher = CipherBuilder.build(masterKey, macKey);
 		tryReadPasswords(cipher);
 	}
