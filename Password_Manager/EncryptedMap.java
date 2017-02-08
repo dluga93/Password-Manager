@@ -21,10 +21,10 @@ public class EncryptedMap {
 		int masterKeySize = CipherBuilder.encryptionKeyType.sizeInBytes();
 		byte[] masterKey = new byte[masterKeySize];
 
-		int macKeySize = CipherBuilder.encryptionKeyType.sizeInBytes();
+		int macKeySize = Hmac.keyType.sizeInBytes();
 		byte[] macKey = new byte[macKeySize];
-
 		tryReadKeys(password, masterKey, macKey);
+
 		cipher = CipherBuilder.build(masterKey, macKey);
 		tryReadPasswords(cipher);
 	}
