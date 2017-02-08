@@ -37,11 +37,12 @@ public class EncryptedMap {
 	    byte[] maccedMacKey = keyDecrypter.tryDecrypt(encryptedMacKey);
 	    macKey = Hmac.unwrap(maccedMacKey);
 
+	    Hmac hmac = new Hmac(macKey);
 	    byte[] encryptedMasterKey = fileReader.readData();
 	    keyDecrypter =
 	    	CipherBuilder.build(Naming.masterSaltFilename(user), password);
 	    byte[] maccedMasterKey = keyDecrypter.tryDecrypt(encryptedMasterKey);
-	    masterKey = Hmac.unwrap(maccedMasterKey);
+	    masterKey = hmac.unwrap(maccedMasterKey);
 
 	    fileReader.close();
 	}
