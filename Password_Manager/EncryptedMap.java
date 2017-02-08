@@ -31,15 +31,17 @@ public class EncryptedMap {
 	    String keyFilename = Naming.keyFileName(user);
 	    fileReader = new EncodedFileReader(keyFilename);
 
-	    byte[] encryptedMasterKey = fileReader.readData();
-	    StringCipher keyDecrypter =
-	    	CipherBuilder.build(Naming.masterSaltFilename(user), password);
-	    masterKey = keyDecrypter.tryDecrypt(encryptedMasterKey);
-
 	    byte[] encryptedMacKey = fileReader.readData();
 	    keyDecrypter =
 	    	CipherBuilder.build(Naming.macSaltFilename(user), password);
-	    macKey = keyDecrypter.tryDecrypt(encryptedMacKey);
+	    byte[] maccedMacKey = keyDecrypter.tryDecrypt(encryptedMacKey);
+	    macKey = Hmac.unwrap(maccedMacKey);
+
+	    byte[] encryptedMasterKey = fileReader.readData();
+	    StringCipher keyDecrypter =
+	    	CipherBuilder.build(Naming.masterSaltFilename(user), password);
+	    byte[] maccedMasterKey = keyDecrypter.tryDecrypt(encryptedMasterKey);
+	    masterKey = Hmac.unwrap(maccedMasterKey);
 
 	    fileReader.close();
 	}
