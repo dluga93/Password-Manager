@@ -14,7 +14,7 @@ public class EncryptedMap {
 	private EncodedFileReader fileReader;
 	private final String user;
 
-	public EncryptedMap(String user, String password) throws Hmac.IntegrityException, Exception {
+	public EncryptedMap(String user, String password) throws Exception {
 		this.user = user;
 		passwordMap = new HashMap<String, String>();
 
@@ -30,7 +30,7 @@ public class EncryptedMap {
 	throws Exception {
 		String keyFilename = Naming.keyFileName(user);
 		try {
-			readKeys2(password, masterKey, macKey);
+			readKeys(password, masterKey, macKey);
 		} catch (FileNotFoundException e) {
 			throw new Exception("Key file " + keyFilename +
 				" not found.");
@@ -45,7 +45,7 @@ public class EncryptedMap {
 		}
 	}
 
-	private void readKeys2(String password, byte[] masterKey, byte[] macKey)
+	private void readKeys(String password, byte[] masterKey, byte[] macKey)
 	throws Exception {
 	    String keyFilename = Naming.keyFileName(user);
 	    fileReader = new EncodedFileReader(keyFilename);
