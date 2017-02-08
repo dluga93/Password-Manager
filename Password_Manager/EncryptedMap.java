@@ -42,7 +42,7 @@ public class EncryptedMap {
 	    keyDecrypter =
 	    	CipherBuilder.build(Naming.masterSaltFilename(user), password);
 	    byte[] maccedMasterKey = keyDecrypter.tryDecrypt(encryptedMasterKey);
-	    masterKey = hmac.unwrap(maccedMasterKey);
+	    masterKey = hmac.unmac(maccedMasterKey);
 
 	    fileReader.close();
 	}
