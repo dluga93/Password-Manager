@@ -23,10 +23,16 @@ public class EncryptedMap {
 
 		int macKeySize = Hmac.keyType.sizeInBytes();
 		byte[] macKey = new byte[macKeySize];
-		tryReadKeys(password, masterKey, macKey);
+
+		getKeys(password, masterKey, macKey);
 
 		cipher = CipherBuilder.build(masterKey, macKey);
 		tryReadPasswords(cipher);
+	}
+
+	private void getKeys(String password, byte[] masterKey, byte[] macKey)
+	throws Exception {
+		tryReadKeys(password, masterKey, macKey);
 	}
 
 	private void tryReadKeys(String password, byte[] masterKey, byte[] macKey) 
