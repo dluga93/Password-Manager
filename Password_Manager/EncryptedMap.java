@@ -20,7 +20,7 @@ public class EncryptedMap {
 
 		byte[] masterKey = new byte[CipherBuilder.encryptionKeyType.sizeInBytes()];
 		byte[] macKey = new byte[Hmac.keyType.sizeInBytes()];
-		readKeys(password, masterKey, macKey);
+		tryReadKeys(password, masterKey, macKey);
 
 		cipher = CipherBuilder.build(masterKey, macKey);
 		tryReadPasswords(cipher);
@@ -66,41 +66,6 @@ public class EncryptedMap {
 	    fileReader.close();
 	}
 
-	private void readKeys(String password, byte[] masterKey, byte[] macKey) throws Exception {
-		byte[] maccedMacKey = tryReadKey(password, Naming.macKeyFilename(user));
-		macKey = Hmac.unwrap(maccedMacKey);
-
-		Hmac hmac = new Hmac(macKey);
-		byte[] maccedMasterKey = tryReadKey(password, Naming.masterKeyFilename(user));
-		masterKey = hmac.unmac(maccedMasterKey);
-	}
-
-	private byte[] tryReadKey(String password, String filename) throws Exception {
-		try {
-			return readKey(password, filename);
-		} catch (IOException e) {
-			throw new Exception("User does not exist or key file corrupted.", e);
-		} catch (BadPaddingException e) {
-			throw new Exception("Wrong password or corrupted files.", e);
-		}
-	}
-
-	private byte[] readKey(String password, String filename)
-	throws FileNotFoundException, IOException, BadPaddingException, Exception {
-		EncodedFileReader fileReader = new EncodedFileReader(filename);
-		byte[] encryptedKey = fileReader.readData();
-		fileReader.close();
-
-		StringCipher keyDecrypter = null;
-		if (filename.equals(Naming.masterKeyFilename(user)))
-			keyDecrypter = CipherBuilder.build(Naming.masterSaltFilename(user), password);
-		else
-			keyDecrypter = CipherBuilder.build(Naming.macSaltFilename(user), password);
-
-		byte[] key = keyDecrypter.tryDecrypt(encryptedKey);
-		return key;
-	}
-
 	private void tryReadPasswords(StringCipher cipher) throws Exception {
 		try {
 			readPasswords(cipher);
@@ -130,7 +95,7 @@ public class EncryptedMap {
 	public void tryChangeMasterPassword(String oldPass, String newPass) throws Exception {
 		byte[] masterKey = new byte[CipherBuilder.encryptionKeyType.sizeInBytes()];
 		byte[] macKey = new byte[Hmac.keyType.sizeInBytes()];
-		readKeys(oldPass, masterKey, macKey);
+		tryReadKeys(oldPass, masterKey, macKey);
 		try {
 			new Registration(user, newPass, masterKey, macKey);
 		} catch (FileAlreadyExistsException e) {
