@@ -19,18 +19,18 @@ public class EncryptedMap {
 		passwordMap = new HashMap<String, String>();
 
 		int masterKeySize = CipherBuilder.encryptionKeyType.sizeInBytes();
-		byte[] masterKey = new byte[masterKeySize];
+		ByteArray masterKey = new ByteArray(masterKeySize);
 
 		int macKeySize = Hmac.keyType.sizeInBytes();
-		byte[] macKey = new byte[macKeySize];
+		ByteArray macKey = new ByteArray(macKeySize);
 
 		getKeys(password, masterKey, macKey);
 
-		cipher = CipherBuilder.build(masterKey, macKey);
+		cipher = CipherBuilder.build(masterKey.getData(), macKey.getData());
 		tryReadPasswords(cipher);
 	}
 
-	private void getKeys(String password, byte[] masterKey, byte[] macKey)
+	private void getKeys(String password, ByteArray masterKey, ByteArray macKey)
 	throws Exception {
 		tryReadKeys(password, masterKey, macKey);
 		byte[] decryptedMasterKey =
@@ -40,18 +40,18 @@ public class EncryptedMap {
 			decryptKey(password, Naming.macSaltFilename(user), macKey);
 
 		// unmac keys
-		macKey = Hmac.unwrap(macKey);
-		Hmac hmac = new Hmac(macKey);
-		masterKey = hmac.unmac(masterKey);
+		macKey.setData(Hmac.unwrap(macKey.getData()));
+		Hmac hmac = new Hmac(macKey.getData());
+		masterKey.setData(hmac.unmac(masterKey.getData()));
 	}
 
 	private byte[] decryptKey(String password, String saltFilename,
-		byte[] encryptedKey) throws Exception {
+		ByteArray encryptedKey) throws Exception {
 		StringCipher keyDecrypter = CipherBuilder.build(saltFilename, password);
-		return keyDecrypter.tryDecrypt(encryptedKey);
+		return keyDecrypter.tryDecrypt(encryptedKey.getData());
 	}
 
-	private void tryReadKeys(String password, byte[] masterKey, byte[] macKey) 
+	private void tryReadKeys(String password, ByteArray masterKey, ByteArray macKey) 
 	throws Exception {
 		String keyFilename = Naming.keyFileName(user);
 		try {
@@ -70,7 +70,7 @@ public class EncryptedMap {
 		}
 	}
 
-	private void readKeys(String password, byte[] masterKey, byte[] macKey)
+	private void readKeys(String password, ByteArray masterKey, ByteArray macKey)
 	throws FileNotFoundException, EOFException, IOException,
 	Hmac.IntegrityException, Exception {
 	    String keyFilename = Naming.keyFileName(user);
@@ -81,8 +81,8 @@ public class EncryptedMap {
 
 	    fileReader.close();
 	    
-	    System.arraycopy(encryptedMasterKey, 0, masterKey, 0, masterKey.length);
-	    System.arraycopy(encryptedMacKey, 0, macKey, 0, macKey.length);
+	    System.arraycopy(encryptedMasterKey, 0, masterKey, 0, masterKey.length());
+	    System.arraycopy(encryptedMacKey, 0, macKey, 0, macKey.length());
 	}
 
 	private void tryReadPasswords(StringCipher cipher) throws Exception {
