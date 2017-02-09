@@ -35,6 +35,12 @@ public class EncryptedMap {
 		tryReadKeys(password, masterKey, macKey);
 	}
 
+	private void decryptKey(String password, String saltFilename,
+		byte[] encryptedKey) throws Exception {
+		StringCipher keyDecrypter = CipherBuilder.build(saltFilename, password);
+		encryptedKey = keyDecrypter.tryDecrypt(encryptedKey);
+	}
+
 	private void tryReadKeys(String password, byte[] masterKey, byte[] macKey) 
 	throws Exception {
 		String keyFilename = Naming.keyFileName(user);
