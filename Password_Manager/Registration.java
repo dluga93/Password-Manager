@@ -42,6 +42,17 @@ public class Registration {
 		macKey = CipherBuilder.generateKey(Hmac.keyType);
 	}
 
+	private void createPasswordDirectory() throws FileAlreadyExistsException, Exception {
+		String directoryName = Naming.directoryName(user);
+		try {
+			Files.createDirectory(Paths.get(directoryName));
+		} catch (FileAlreadyExistsException e) {
+			throw e;
+		} catch (IOException e) {
+			throw new Exception("Couldn't create password directory.", e);
+		}
+	}
+
 	private void encryptAndStoreKeys(String password) throws Exception {
 		byte[] masterKeySalt = CipherBuilder.randomData(SALT_LENGTH);
 		byte[] macKeySalt = CipherBuilder.randomData(SALT_LENGTH);
@@ -85,17 +96,6 @@ public class Registration {
 			fileWriter.close();
 		} catch (IOException e) {
 			throw new Exception("Couldn't write to " + filename + " file.", e);
-		}
-	}
-
-	private void createPasswordDirectory() throws FileAlreadyExistsException, Exception {
-		String directoryName = Naming.directoryName(user);
-		try {
-			Files.createDirectory(Paths.get(directoryName));
-		} catch (FileAlreadyExistsException e) {
-			throw e;
-		} catch (IOException e) {
-			throw new Exception("Couldn't create password directory.", e);
 		}
 	}
 }
