@@ -9,6 +9,8 @@ import Password_Manager.Encryption.CipherBuilder;
 import Password_Manager.Encryption.Hmac;
 
 public class EncryptedMap {
+	private static final int macKeyIndexInFile = 0;
+	private static final int masterKeyIndexInFile = 1;
 	private StringCipher cipher;
 	private HashMap<String, String> passwordMap;
 	private EncodedFileReader fileReader;
@@ -79,13 +81,12 @@ public class EncryptedMap {
 	    String keyFilename = Naming.keyFileName(user);
 	    fileReader = new EncodedFileReader(keyFilename);
 
-	    byte[] encryptedMacKey = fileReader.readData();
-	    byte[] encryptedMasterKey = fileReader.readData();
+	    ArrayList<ByteArray> encryptedKeys = fileReader.readData();
 
 	    fileReader.close();
 
-	    masterKey.setData(encryptedMasterKey);
-	    macKey.setData(encryptedMacKey);
+	    macKey.setData(encryptedKeys.get(macKeyIndexInFile).getData());
+	    masterKey.setData(encryptedKeys.get(masterKeyIndexInFile).getData());
 	}
 
 	private void tryReadPasswords(StringCipher cipher) throws Exception {
@@ -107,9 +108,13 @@ public class EncryptedMap {
 
 		for (String filename : filenames) {
 			EncodedFileReader fileReader = new EncodedFileReader(filename);
-			String website = cipher.tryDecryptString(fileReader.readData());
-			String password = cipher.tryDecryptString(fileReader.readData());
+
+			ArrayList<ByteArray> data = fileReader.readData();
+
 			fileReader.close();
+
+			String website = cipher.tryDecryptString(data.get(0).getData());
+			String password = cipher.tryDecryptString(data.get(1).getData());
 			passwordMap.put(website, password);
 		}
 	}

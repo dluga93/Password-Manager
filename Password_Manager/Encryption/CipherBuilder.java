@@ -1,11 +1,13 @@
 package Password_Manager.Encryption;
 import Password_Manager.Logger;
 import Password_Manager.EncodedFileReader;
+import Password_Manager.ByteArray;
 
 import javax.crypto.*;
 import javax.crypto.spec.*;
 import java.security.*;
 import java.io.*;
+import java.util.*;
 
 public class CipherBuilder {
 	private static final String cipherInitString = "AES/CBC/PKCS5Padding";
@@ -44,9 +46,10 @@ public class CipherBuilder {
 	private static byte[] readSaltFromFile(String saltFilename) throws Exception {
 		try {
 			EncodedFileReader fileReader = new EncodedFileReader(saltFilename);
-			byte[] salt = fileReader.readData();
+			ArrayList<ByteArray> data = fileReader.readData();
 			fileReader.close();
-			return salt;
+
+			return data.get(0).getData();
 		} catch (FileNotFoundException e) {
 			throw new Exception("Can't find salt file.");
 		} catch (Exception e) {
