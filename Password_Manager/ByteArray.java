@@ -7,6 +7,10 @@ public class ByteArray {
         this.data = data;
     }
 
+    public ByteArray(int arraySize) {
+        this.data = new byte[arraySize];
+    }
+
     public byte[] getData() {
         return data;
     }
