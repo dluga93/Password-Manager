@@ -2,6 +2,7 @@ package Password_Manager;
 
 import java.io.*;
 import java.nio.file.*;
+import java.util.*;
 
 public class EncodedFileWriter {
 	private FileOutputStream fileOutStream;
@@ -16,6 +17,19 @@ public class EncodedFileWriter {
 
 	public void close() throws IOException {
 		fileOutStream.close();
+	}
+
+	public void writeData2(ArrayList<ByteArray> dataToWrite) throws IOException {
+		for (ByteArray entry : dataToWrite) {
+			byte[] encoded = encodeBytes(entry.getData());
+
+			try {
+				fileOutStream.write(encoded);
+			} catch (IOException e) {
+				fileOutStream.close();
+				throw e;
+			}
+		}
 	}
 
 	public void writeData(byte[] data) throws IOException {
