@@ -14,6 +14,19 @@ public class EncodedFileReader {
 		fileInStream.close();
 	}
 
+	public ArrayList<ByteArray> readData2() throws IOException {
+		ArrayList<ByteArray> dataEntries = new ArrayList<ByteArray>();
+		try {
+			while (true) { // breaks with EOFException
+				byte[] rawBytes = decodeBytes(fileInStream);
+				ByteArray entry = new ByteArray(rawBytes);
+				dataEntries.add(entry);
+			}
+		} catch (EOFException e) {
+			return dataEntries;
+		}
+	}
+
 	public byte[] readData() throws IOException, EOFException {
 		try {
 			return decodeBytes(fileInStream);
