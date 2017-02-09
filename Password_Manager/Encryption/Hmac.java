@@ -39,7 +39,8 @@ public class Hmac {
 		}
 	}
 
-	public byte[] unmac(byte[] maccedMessage) throws Exception {
+	public byte[] unmac(byte[] maccedMessage) throws Hmac.IntegrityException,
+	Exception {
 		if (maccedMessage.length <= keyType.sizeInBytes())
 			throw new Exception("Corrupted data. Invalid length.");
 
@@ -50,7 +51,7 @@ public class Hmac {
 		System.arraycopy(maccedMessage, message.length, mac, 0, mac.length);
 
 		if (!isMacCorrect(message, mac))
-			throw new Exception("Corrupted data. Incorrect MAC.");
+			throw new Hmac.IntegrityException();
 
 		return message;
 	}
