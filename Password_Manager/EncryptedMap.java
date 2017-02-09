@@ -112,11 +112,11 @@ public class EncryptedMap {
 	}
 
 	public void tryChangeMasterPassword(String oldPass, String newPass) throws Exception {
-		byte[] masterKey = new byte[CipherBuilder.encryptionKeyType.sizeInBytes()];
-		byte[] macKey = new byte[Hmac.keyType.sizeInBytes()];
+		ByteArray masterKey = new ByteArray(CipherBuilder.encryptionKeyType.sizeInBytes());
+		ByteArray macKey = new ByteArray(Hmac.keyType.sizeInBytes());
 		tryReadKeys(oldPass, masterKey, macKey);
 		try {
-			new Registration(user, newPass, masterKey, macKey);
+			new Registration(user, newPass, masterKey.getData(), macKey.getData());
 		} catch (FileAlreadyExistsException e) {
 			// supposed to happen because password folder already exists. ignore
 		}
