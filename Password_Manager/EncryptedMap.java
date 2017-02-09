@@ -127,14 +127,20 @@ public class EncryptedMap {
 
 	public void addEntry(String website, String password)
 	throws FileNotFoundException, IOException {
-		byte[] encryptedWebsite = cipher.tryEncrypt(website);
-		byte[] encryptedPassword = cipher.tryEncrypt(password);
+		byte[] rawEncryptedWebsite = cipher.tryEncrypt(website);
+		byte[] rawEncryptedPassword = cipher.tryEncrypt(password);
 		String pathname = Naming.directoryName(user) + File.separator +
 				Naming.entryFilename(user, website);
 
+		ArrayList<ByteArray> encryptedData = new ArrayList<ByteArray>();
+		ByteArray encryptedWebsite = new ByteArray(rawEncryptedWebsite);
+		ByteArray encryptedPassword = new ByteArray(rawEncryptedPassword);
+
+		encryptedData.add(encryptedWebsite);
+		encryptedData.add(encryptedPassword);
+
 		EncodedFileWriter fileWriter = new EncodedFileWriter(pathname);
-		fileWriter.writeData(encryptedWebsite);
-		fileWriter.writeData(encryptedPassword);
+		fileWriter.writeData(encryptedData);
 		fileWriter.close();
 		passwordMap.put(website, password);
 	}

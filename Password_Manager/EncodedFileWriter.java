@@ -19,7 +19,7 @@ public class EncodedFileWriter {
 		fileOutStream.close();
 	}
 
-	public void writeData2(ArrayList<ByteArray> dataToWrite) throws IOException {
+	public void writeData(ArrayList<ByteArray> dataToWrite) throws IOException {
 		for (ByteArray entry : dataToWrite) {
 			byte[] encoded = encodeBytes(entry.getData());
 
@@ -32,7 +32,7 @@ public class EncodedFileWriter {
 		}
 	}
 
-	public void writeData(byte[] data) throws IOException {
+	/*public void writeData(byte[] data) throws IOException {
 		byte[] encoded = encodeBytes(data);
 		try {
 			fileOutStream.write(encoded);
@@ -40,7 +40,7 @@ public class EncodedFileWriter {
 			fileOutStream.close();
 			throw e;
 		}
-	}
+	}*/
 
 	private byte[] encodeBytes(byte[] bytes) {
 		int length = bytes.length;

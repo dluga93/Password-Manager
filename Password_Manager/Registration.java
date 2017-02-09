@@ -4,6 +4,7 @@ import Password_Manager.Encryption.CipherBuilder;
 import Password_Manager.Encryption.Hmac;
 import java.nio.file.*;
 import java.io.*;
+import java.util.*;
 
 public class Registration {
 	private static final int SALT_LENGTH = 32; // bytes
@@ -92,7 +93,11 @@ public class Registration {
 	private void saveDataToFile(byte[] data, String filename) throws Exception {
 		try {
 			EncodedFileWriter fileWriter = new EncodedFileWriter(filename);
-			fileWriter.writeData(data);
+
+			ArrayList<ByteArray> dataToWrite = new ArrayList<ByteArray>();
+			dataToWrite.add(new ByteArray(data));
+			fileWriter.writeData(dataToWrite);
+
 			fileWriter.close();
 		} catch (IOException e) {
 			throw new Exception("Couldn't write to " + filename + " file.", e);
