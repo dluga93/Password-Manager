@@ -40,7 +40,7 @@ The master and hmac keys are encrypted with a third key generated from the store
 
 ## Build and Run
 
-The application was developped using Java and SWT for the user interface. You can download the source code, extract it and rename the directory to *Password_Manager*. You will need to get <a href="http://www.eclipse.org/swt/">SWT</a>. Make sure it matches your JVM; they should both be 64-bit or 32-bit. Finally put the .jar file in the classpath when building and running the application.
+The application was developped using Java and SWT for the user interface. First download the source code and extract it. Get <a href="http://www.eclipse.org/swt/">SWT</a>. Make sure it matches your JVM; they should both be 64-bit or 32-bit. Next put the SWT jar file in the classpath when building and running the application.
 
 Example building and running from the command line:
 
