@@ -33,12 +33,22 @@ public class EncryptedMap {
 	private void getKeys(String password, byte[] masterKey, byte[] macKey)
 	throws Exception {
 		tryReadKeys(password, masterKey, macKey);
+		byte[] decryptedMasterKey =
+			decryptKey(password, Naming.masterSaltFilename(user), masterKey);
+
+		byte[] decryptedMacKey =
+			decryptKey(password, Naming.macSaltFilename(user), macKey);
+
+		// unmac keys
+		macKey = Hmac.unwrap(macKey);
+		Hmac hmac = new Hmac(macKey);
+		masterKey = hmac.unmac(masterKey);
 	}
 
-	private void decryptKey(String password, String saltFilename,
+	private byte[] decryptKey(String password, String saltFilename,
 		byte[] encryptedKey) throws Exception {
 		StringCipher keyDecrypter = CipherBuilder.build(saltFilename, password);
-		encryptedKey = keyDecrypter.tryDecrypt(encryptedKey);
+		return keyDecrypter.tryDecrypt(encryptedKey);
 	}
 
 	private void tryReadKeys(String password, byte[] masterKey, byte[] macKey) 
@@ -61,24 +71,18 @@ public class EncryptedMap {
 	}
 
 	private void readKeys(String password, byte[] masterKey, byte[] macKey)
-	throws Exception {
+	throws FileNotFoundException, EOFException, IOException,
+	Hmac.IntegrityException, Exception {
 	    String keyFilename = Naming.keyFileName(user);
 	    fileReader = new EncodedFileReader(keyFilename);
 
 	    byte[] encryptedMacKey = fileReader.readData();
-	    StringCipher keyDecrypter =
-	    	CipherBuilder.build(Naming.macSaltFilename(user), password);
-	    byte[] maccedMacKey = keyDecrypter.tryDecrypt(encryptedMacKey);
-	    macKey = Hmac.unwrap(maccedMacKey);
-
-	    Hmac hmac = new Hmac(macKey);
 	    byte[] encryptedMasterKey = fileReader.readData();
-	    keyDecrypter =
-	    	CipherBuilder.build(Naming.masterSaltFilename(user), password);
-	    byte[] maccedMasterKey = keyDecrypter.tryDecrypt(encryptedMasterKey);
-	    masterKey = hmac.unmac(maccedMasterKey);
 
 	    fileReader.close();
+	    
+	    System.arraycopy(encryptedMasterKey, 0, masterKey, 0, masterKey.length);
+	    System.arraycopy(encryptedMacKey, 0, macKey, 0, macKey.length);
 	}
 
 	private void tryReadPasswords(StringCipher cipher) throws Exception {
