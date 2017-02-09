@@ -18,4 +18,8 @@ public class ByteArray {
     public void setData(byte[] data) {
         this.data = data;
     }
+
+    public int length() {
+        return data.length;
+    }
 }
