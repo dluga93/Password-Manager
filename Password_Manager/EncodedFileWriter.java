@@ -32,16 +32,6 @@ public class EncodedFileWriter {
 		}
 	}
 
-	/*public void writeData(byte[] data) throws IOException {
-		byte[] encoded = encodeBytes(data);
-		try {
-			fileOutStream.write(encoded);
-		} catch (IOException e) {
-			fileOutStream.close();
-			throw e;
-		}
-	}*/
-
 	private byte[] encodeBytes(byte[] bytes) {
 		int length = bytes.length;
 		byte[] lengthBytes = encodeInt(length);

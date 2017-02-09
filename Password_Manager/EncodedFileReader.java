@@ -27,15 +27,6 @@ public class EncodedFileReader {
 		}
 	}
 
-	/*public byte[] readData() throws IOException, EOFException {
-		try {
-			return decodeBytes(fileInStream);
-		} catch (IOException e) {
-			fileInStream.close();
-			throw e;
-		}
-	}*/
-
 	private byte[] decodeBytes(FileInputStream file) throws IOException, EOFException {
 		int length = decodeInt(file);
 		byte[] data = new byte[length];
