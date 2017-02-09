@@ -33,11 +33,14 @@ public class EncryptedMap {
 	private void getKeys(String password, ByteArray masterKey, ByteArray macKey)
 	throws Exception {
 		tryReadKeys(password, masterKey, macKey);
+
 		byte[] decryptedMasterKey =
 			decryptKey(password, Naming.masterSaltFilename(user), masterKey);
+		masterKey.setData(decryptedMasterKey);
 
 		byte[] decryptedMacKey =
 			decryptKey(password, Naming.macSaltFilename(user), macKey);
+		macKey.setData(decryptedMacKey);
 
 		// unmac keys
 		macKey.setData(Hmac.unwrap(macKey.getData()));
@@ -80,9 +83,9 @@ public class EncryptedMap {
 	    byte[] encryptedMasterKey = fileReader.readData();
 
 	    fileReader.close();
-	    
-	    System.arraycopy(encryptedMasterKey, 0, masterKey, 0, masterKey.length());
-	    System.arraycopy(encryptedMacKey, 0, macKey, 0, macKey.length());
+
+	    masterKey.setData(encryptedMasterKey);
+	    macKey.setData(encryptedMacKey);
 	}
 
 	private void tryReadPasswords(StringCipher cipher) throws Exception {
