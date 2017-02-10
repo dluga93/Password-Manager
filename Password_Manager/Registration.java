@@ -86,8 +86,13 @@ public class Registration {
 	throws FileAlreadyExistsException, Exception {
 		saveDataToFile(masterKeySalt, Naming.masterSaltFilename(user));
 		saveDataToFile(macKeySalt, Naming.macSaltFilename(user));
-		saveDataToFile(encryptedMasterKey, Naming.masterKeyFilename(user));
-		saveDataToFile(encryptedMacKey, Naming.macKeyFilename(user));
+
+		EncodedFileWriter fileWriter = new EncodedFileWriter(Naming.keyFileName(user));
+		ArrayList<ByteArray> keys = new ArrayList<ByteArray>();
+		keys.add(new ByteArray(encryptedMacKey));
+		keys.add(new ByteArray(encryptedMasterKey));
+		fileWriter.writeData(keys);
+		fileWriter.close();
 	}
 
 	private void saveDataToFile(byte[] data, String filename) throws Exception {
