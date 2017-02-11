@@ -3,17 +3,46 @@ package Password_Manager;
 import java.io.*;
 import java.util.*;
 
+/**
+ * @brief Class for reading encoded data from files.
+ * 
+ * An encoded file contains contiguous data entries.
+ * Each data entry is encoded as a four byte integer, showing the length
+ * of the data field, followed by the data itself.
+ */
 public class EncodedFileReader {
-	private FileInputStream fileInStream;
+	private FileInputStream fileInStream; ///< The file we are reading from.
 
+	/**
+	 * Constructs an object to read from the file ```filename```.
+	 *
+	 * @param      filename  The name of the file we want to read from.
+	 * @throws     FileNotFoundException if the file does not exist.
+	 */
 	public EncodedFileReader(String filename) throws FileNotFoundException {
 		fileInStream = new FileInputStream(filename);
 	}
 
+	/**
+	 * @brief Closes the file we're reading.
+	 * 
+	 * Closes the fileInStream object.
+	 *
+	 * @throws     IOException  if an error occured while closing the file stream.
+	 */
 	public void close() throws IOException {
 		fileInStream.close();
 	}
 
+	/**
+	 * @brief Reads all the data from a file.
+	 * 
+	 * Returns all the data entries in the currently opened file.
+	 *
+	 * @return     A list of data entries as ```ByteArray``` objects.
+	 *
+	 * @throws     IOException  if a problem occured while reading from the file.
+	 */
 	public ArrayList<ByteArray> readData() throws IOException {
 		ArrayList<ByteArray> dataEntries = new ArrayList<ByteArray>();
 		try {
@@ -27,6 +56,18 @@ public class EncodedFileReader {
 		}
 	}
 
+	/**
+	 * @brief Returns the next decoded entry in the file
+	 * 
+	 * Decodes the next entry in ```fileInStream``` and returns it.
+	 *
+	 * @param      file          The file to read from
+	 *
+	 * @return     The data entry as a ```byte[]```
+	 *
+	 * @throws     IOException   If an error occured reading from the file
+	 * @throws     EOFException  If we've reached the end of the file.
+	 */
 	private byte[] decodeBytes(FileInputStream file) throws IOException, EOFException {
 		int length = decodeInt(file);
 		byte[] data = new byte[length];
