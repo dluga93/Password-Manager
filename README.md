@@ -21,6 +21,7 @@ The application creates a directory and four files for each user account. If you
 The directory contains a file for each website you have added in the application. These files contain the macced and encrypted (in that order) passwords.
 
 The other four files contain:
+
 * Master key salt
 * Password-encrypted master key
 * Hmac key salt
