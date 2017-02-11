@@ -12,7 +12,7 @@ To build the program, follow these steps.
 3. Put the SWT jar file in the classpath.
 4. Run the following command:
 ```javac -cp <swt_jar_path>:<code_path> <code_path>/Password_Manager/*.java <code_path>/Password_Manager/UI/*.java <code_path>/Password_Manager/Encryption/*.java```
-where ```<code_path>``` is the path to the source code and ```<swt_jar_path>``` is the path to the downloaded swt.jar file.
+where ```<code_path>``` is the path to the source code and ```<swt_jar_path>``` is the path to the downloaded swt.jar file. (NOTE: Use ```;``` instead of ```:``` in the classpath if you are on Windows.
 5. Now you can run the program with:
 ```
 java -cp <swt_jar_path>:<code_path> <code_path>/Password_Manager.Client
