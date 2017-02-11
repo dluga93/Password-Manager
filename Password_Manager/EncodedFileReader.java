@@ -42,7 +42,7 @@ public class EncodedFileReader {
 	 *
 	 * @return     A list of data entries as ```ByteArray``` objects.
 	 *
-	 * @throws     IOException  if a problem occurred while reading from the file.
+	 * @throws     IOException  if an error occurred while reading from the file.
 	 */
 	public ArrayList<ByteArray> readData() throws IOException {
 		ArrayList<ByteArray> dataEntries = new ArrayList<ByteArray>();
