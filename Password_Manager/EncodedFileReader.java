@@ -47,7 +47,7 @@ public class EncodedFileReader {
 		ArrayList<ByteArray> dataEntries = new ArrayList<ByteArray>();
 		try {
 			while (true) { // breaks with EOFException
-				byte[] rawBytes = decodeBytes(fileInStream);
+				byte[] rawBytes = decodeBytes();
 				ByteArray entry = new ByteArray(rawBytes);
 				dataEntries.add(entry);
 			}
@@ -69,9 +69,9 @@ public class EncodedFileReader {
 	 * @throws     EOFException  If we've reached the end of the file.
 	 */
 	private byte[] decodeBytes() throws IOException, EOFException {
-		int length = decodeInt(fileInStream);
+		int length = decodeInt();
 		byte[] data = new byte[length];
-		if (file.read(data) == -1)
+		if (fileInStream.read(data) == -1)
 			throw new EOFException();
 		return data;
 	}
