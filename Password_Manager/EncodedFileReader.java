@@ -68,17 +68,17 @@ public class EncodedFileReader {
 	 * @throws     IOException   If an error occured reading from the file
 	 * @throws     EOFException  If we've reached the end of the file.
 	 */
-	private byte[] decodeBytes(FileInputStream file) throws IOException, EOFException {
-		int length = decodeInt(file);
+	private byte[] decodeBytes() throws IOException, EOFException {
+		int length = decodeInt(fileInStream);
 		byte[] data = new byte[length];
 		if (file.read(data) == -1)
 			throw new EOFException();
 		return data;
 	}
 
-	private int decodeInt(FileInputStream file) throws IOException, EOFException {
+	private int decodeInt() throws IOException, EOFException {
 		byte[] intBytes = new byte[4];
-		if (file.read(intBytes) == -1)
+		if (fileInStream.read(intBytes) == -1)
 			throw new EOFException();
 		return decodeInt(intBytes);
 	}
