@@ -62,8 +62,6 @@ public class EncodedFileReader {
 	 * 
 	 * Decodes the next entry in ```fileInStream``` and returns it.
 	 *
-	 * @param      file          The file to read from
-	 *
 	 * @return     The data entry as a ```byte[]```
 	 *
 	 * @throws     IOException   If an error occurred reading from the file
