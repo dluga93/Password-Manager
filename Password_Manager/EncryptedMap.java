@@ -305,7 +305,6 @@ public class EncryptedMap {
 		EncodedFileWriter.deleteFile(Naming.directoryName(user));
 		EncodedFileWriter.deleteFile(Naming.masterSaltFilename(user));
 		EncodedFileWriter.deleteFile(Naming.macSaltFilename(user));
-		EncodedFileWriter.deleteFile(Naming.masterKeyFilename(user));
-		EncodedFileWriter.deleteFile(Naming.macKeyFilename(user));
+		EncodedFileWriter.deleteFile(Naming.keyFileName(user));
 	}
 }
