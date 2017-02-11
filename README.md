@@ -11,7 +11,9 @@ To build the program, follow these steps.
 2. Download <a href="http://www.eclipse.org/swt/">SWT</a>. Make sure it matches your JVM; they should both be 64-bit or 32-bit.
 3. Put the SWT jar file in the classpath.
 4. Run the following command:
-```javac -cp <swt_jar_path>:<code_path> <code_path>/Password_Manager/*.java <code_path>/Password_Manager/UI/*.java <code_path>/Password_Manager/Encryption/*.java```
+```
+javac -cp <swt_jar_path>:<code_path> <code_path>/Password_Manager/*.java <code_path>/Password_Manager/UI/*.java <code_path>/Password_Manager/Encryption/*.java
+```
 where ```<code_path>``` is the path to the source code and ```<swt_jar_path>``` is the path to the downloaded swt.jar file. (NOTE: Use ```;``` instead of ```:``` in the classpath if you are on Windows.
 5. Now you can run the program with:
 ```
@@ -22,9 +24,9 @@ java -cp <swt_jar_path>:<code_path> <code_path>/Password_Manager.Client
 
 Create an account by clicking on **Register** and input a username and a master password. This master password is the only one you will need to remember.
 
-After registering, you will be logged in, and you will be shown the list of your website passwords (which will be empty if you just registered). Now you can add website passwords. You can do this by clicking **File**->**New Password** in the menu, or just pressing *Ctrl+N* on your keyboard. You input the website name, and the password you want to associate with that website. You click **Add** and the entry is saved.
+After registering, you will be logged in, and you will be shown the list of your website passwords (which will be empty if you just registered). Now you can add website passwords. You can do this by clicking **File**-> **New Password** in the menu, or just pressing *Ctrl+N* on your keyboard. You input the website name, and the password you want to associate with that website. You click **Add** and the entry is saved.
 
-In the list, you can only see the website names, not the actual passwords. To get the password, you click on a website, and press *Ctrl+C* or **Edit**->**Copy** in the menu. The password is now in your clipboard and you can directly paste it in a textbox or wherever you want.
+In the list, you can only see the website names, not the actual passwords. To get the password, you click on a website, and press *Ctrl+C* or **Edit**-> **Copy** in the menu. The password is now in your clipboard and you can directly paste it in a textbox or wherever you want.
 
 ## Technical details
 
