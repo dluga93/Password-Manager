@@ -21,20 +21,10 @@ The application creates a directory and four files for each user account. If you
 The directory contains a file for each website you have added in the application. These files contain the macced and encrypted (in that order) passwords.
 
 The other four files contain:
-<ul>
-  <li>
-    Master key salt
-  </li>
-  <li>
-    Password-encrypted master key
-  </li>
-  <li>
-    Hmac key salt
-  </li>
-  <li>
-    Password-encrypted hmac key
-  </li>
-</ul>
+* Master key salt
+* Password-encrypted master key
+* Hmac key salt
+* Password-encrypted hmac key
 
 The master and hmac keys are encrypted with a third key generated from the stored salt and the master password using <a href="https://en.wikipedia.org/wiki/PBKDF2">PBKDF2</a> with HMAC-SHA1. If the user wants to change the master password, the application only re-encrypts the master and hmac keys, and doesn't need to change the stored website passwords.
 
