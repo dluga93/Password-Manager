@@ -1,5 +1,4 @@
 package Password_Manager.Encryption;
-import Password_Manager.Logger;
 
 import java.nio.charset.*;
 import javax.crypto.*;
@@ -23,18 +22,18 @@ class StringCipherImpl implements StringCipher {
 	}
 
 	// also prepends IV
-	public byte[] tryEncrypt(String plaintext) {
+	public byte[] tryEncrypt(String plaintext) throws Exception {
 		return tryEncrypt(plaintext.getBytes(StandardCharsets.UTF_8));
 	}
 
 	// also prepends IV
-	public byte[] tryEncrypt(byte[] plaintext) {
+	public byte[] tryEncrypt(byte[] plaintext) throws Exception {
 		if (hmac != null)
 			plaintext = hmac.mac(plaintext);
 		return ivAndEncrypt(plaintext);
 	}
 
-	private byte[] ivAndEncrypt(byte[] plaintext) {
+	private byte[] ivAndEncrypt(byte[] plaintext) throws Exception {
 		try {
 			byte[] ivBytes = CipherBuilder.randomData(CipherBuilder.encryptionKeyType.sizeInBytes());
 			IvParameterSpec iv = new IvParameterSpec(ivBytes);
@@ -44,9 +43,7 @@ class StringCipherImpl implements StringCipher {
 			byte[] ivAndEncrypted = Utility.concatByteArray(ivBytes, encrypted);
 			return ivAndEncrypted;
 		} catch (Exception e) {
-			Logger.logException("Problem with encryption algorithm.", e);
-			System.exit(1);
-			return null;
+			throw new Exception("Problem with encryption algorithm.", e);
 		}
 	}
 

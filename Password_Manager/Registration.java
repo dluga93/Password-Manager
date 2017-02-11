@@ -77,8 +77,10 @@ public class Registration {
 	 * 
 	 * Generates the master key and the mac key that will
 	 * be used to encrypt the website password entries.
+	 * 
+	 * @throws     Exception If there was an error generating the keys.
 	 */
-	private void createKeys() {
+	private void createKeys() throws Exception {
 		masterKey = CipherBuilder.generateKey(CipherBuilder.encryptionKeyType);
 		macKey = CipherBuilder.generateKey(Hmac.keyType);
 	}
@@ -141,7 +143,7 @@ public class Registration {
 	 * @throws     FileAlreadyExistsException  If the salt or key files already exist.
 	 */
 	private void tryCreateFiles(byte[] masterKeySalt, byte[] macKeySalt)
-	throws FileAlreadyExistsException {
+	throws FileAlreadyExistsException, Exception {
 		try {
 			createFiles(masterKeySalt, macKeySalt);
 		} catch (FileAlreadyExistsException e) {

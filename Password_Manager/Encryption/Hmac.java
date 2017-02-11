@@ -3,7 +3,6 @@ package Password_Manager.Encryption;
 import javax.crypto.*;
 import javax.crypto.spec.*;
 import java.util.*;
-import Password_Manager.Logger;
 import Password_Manager.Encryption.KeyTypes;
 
 public class Hmac {
@@ -22,20 +21,18 @@ public class Hmac {
 		this.key = key;
 	}
 
-	public byte[] mac(byte[] message) {
+	public byte[] mac(byte[] message) throws Exception {
 		byte[] mac = getMac(message);
 		return Utility.concatByteArray(message, mac);
 	}
 
-	public byte[] getMac(byte[] message) {
+	public byte[] getMac(byte[] message) throws Exception {
 		try {
 			Mac hmac = Mac.getInstance(keyType.getType());
 			hmac.init(new SecretKeySpec(key, keyType.getType()));
 			return hmac.doFinal(message);
 		} catch (Exception e) {
-			Logger.logException("Invalid parameters for MAC algorithm.", e);
-			System.exit(1);
-			return null;
+			throw new Exception("Invalid parameters for MAC algorithm.", e);
 		}
 	}
 
@@ -56,7 +53,7 @@ public class Hmac {
 		return message;
 	}
 
-	private boolean isMacCorrect(byte[] message, byte[] actualMac) {
+	private boolean isMacCorrect(byte[] message, byte[] actualMac) throws Exception {
 		byte[] exptectedMac = getMac(message);
 		if (Arrays.equals(exptectedMac, actualMac))
 			return true;

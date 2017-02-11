@@ -1,7 +1,6 @@
 package Password_Manager.UI;
 
 import Password_Manager.EncryptedMap;
-import Password_Manager.Logger;
 
 import org.eclipse.swt.*;
 import org.eclipse.swt.widgets.*;
@@ -63,8 +62,8 @@ public class PasswordsHandlerUI {
 			passwords.addEntry(website, password);
 			return true;
 		} catch (IOException e) {
-			Logger.logException("Can't add new entry.", e);
-			System.exit(1);
+			UIUtility.errorMessage("Adding/Changing Entry",
+				"IO Error occurred when trying to add new entry.");
 			return false;
 		} catch (Exception e) {
 			UIUtility.errorMessage("Adding/Changing Entry", e.getMessage());
@@ -97,7 +96,7 @@ public class PasswordsHandlerUI {
 				String password1 = newPassText.getText();
 				String password2 = confirmPassText.getText();
 				if (!password1.equals(password2)) {
-					Logger.logError("Passwords don't match.");
+					UIUtility.errorMessage("Editing Password", "Passwords don't match.");
 					return;
 				}
 				boolean success = tryAddPassword(website, password1);

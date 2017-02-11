@@ -1,5 +1,4 @@
 package Password_Manager.Encryption;
-import Password_Manager.Logger;
 import Password_Manager.EncodedFileReader;
 import Password_Manager.ByteArray;
 
@@ -27,20 +26,18 @@ public class CipherBuilder {
 		return build(password, salt);
 	}
 
-	public static StringCipher build(String password, byte[] salt) {
+	public static StringCipher build(String password, byte[] salt) throws Exception {
 		Cipher cipher = createCipher();
 		SecretKey secretKey = keyFromPasswordAndSalt(password, salt);
 		return new StringCipherImpl(cipher, secretKey);
 	}
 
-	private static Cipher createCipher() {
+	private static Cipher createCipher() throws Exception {
 		try {
 			return Cipher.getInstance(cipherInitString);
 		} catch (Exception e) {
-			Logger.logException("Unknown options for encryption algorithm.", e);
-			System.exit(1);
+			throw new Exception("Unknown options for encryption algorithm.", e);
 		}
-		return null;
 	}
 
 	private static byte[] readSaltFromFile(String saltFilename) throws Exception {
@@ -57,7 +54,8 @@ public class CipherBuilder {
 		}
 	}
 
-	private static SecretKey keyFromPasswordAndSalt(String password, byte[] salt) {
+	private static SecretKey keyFromPasswordAndSalt(String password, byte[] salt)
+	throws Exception {
 		try {
 			char[] chars = password.toCharArray();
 			PBEKeySpec spec = new PBEKeySpec(chars, salt, pbeIterations, encryptionKeyType.sizeInBits());
@@ -65,21 +63,17 @@ public class CipherBuilder {
 			byte[] secretKeyBytes = skf.generateSecret(spec).getEncoded();
 			return new SecretKeySpec(secretKeyBytes, 0, secretKeyBytes.length, encryptionKeyType.getType());
 		} catch (Exception e) {
-			Logger.logException("Problem with creating master key from password and salt.", e);
-			System.exit(1);
-			return null;
+			throw new Exception("Problem creating key from password and salt.", e);
 		}
 	}
 
-	public static byte[] generateKey(KeyTypes keyType) {
+	public static byte[] generateKey(KeyTypes keyType) throws Exception {
 		try {
 			KeyGenerator keyGenerator = KeyGenerator.getInstance(keyType.getType());
 			keyGenerator.init(keyType.sizeInBits());
 			return keyGenerator.generateKey().getEncoded();
 		} catch (NoSuchAlgorithmException e) {
-			Logger.logException("Unknown algorithm for key generation.", e);
-			System.exit(1);
-			return null;
+			throw new Exception("Unknown algorithm for key generation.", e);
 		}
 	}
 

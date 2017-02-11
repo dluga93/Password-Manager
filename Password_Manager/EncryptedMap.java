@@ -241,7 +241,7 @@ public class EncryptedMap {
 	 * @throws     IOException            If an error occurs when writing to file.
 	 */
 	public void addEntry(String website, String password)
-	throws FileNotFoundException, IOException {
+	throws FileNotFoundException, IOException, Exception {
 		byte[] rawEncryptedWebsite = cipher.tryEncrypt(website);
 		byte[] rawEncryptedPassword = cipher.tryEncrypt(password);
 		String pathname = Naming.directoryName(user) + File.separator +
