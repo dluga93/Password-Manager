@@ -8,13 +8,18 @@ import Password_Manager.Encryption.StringCipher;
 import Password_Manager.Encryption.CipherBuilder;
 import Password_Manager.Encryption.Hmac;
 
+/**
+ * @brief Structure that keeps password entries in memory
+ * 
+ * A structure based on a HashMap, that stores the password entries
+ * in memory, and handles communication with files in disk.
+ */
 public class EncryptedMap {
-	private static final int macKeyIndexInFile = 0;
-	private static final int masterKeyIndexInFile = 1;
-	private StringCipher cipher;
-	private HashMap<String, String> passwordMap;
-	private EncodedFileReader fileReader;
-	private final String user;
+	private static final int macKeyIndexInFile = 0; ///< Index of the mac key in the file on disk
+	private static final int masterKeyIndexInFile = 1; ///< Index of the master key in the file on disk
+	private StringCipher cipher; ///< cipher used to encrypt passwords
+	private HashMap<String, String> passwordMap; ///< Map storing (website,password) as (key,value) pairs
+	private final String user; ///< Username
 
 	public EncryptedMap(String user, String password) throws Exception {
 		this.user = user;
@@ -79,7 +84,7 @@ public class EncryptedMap {
 	throws FileNotFoundException, EOFException, IOException,
 	Hmac.IntegrityException, Exception {
 	    String keyFilename = Naming.keyFileName(user);
-	    fileReader = new EncodedFileReader(keyFilename);
+	    EncodedFileReader fileReader = new EncodedFileReader(keyFilename);
 
 	    ArrayList<ByteArray> encryptedKeys = fileReader.readData();
 
