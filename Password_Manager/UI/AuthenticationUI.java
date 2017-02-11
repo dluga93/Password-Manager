@@ -1,6 +1,6 @@
 package Password_Manager.UI;
 import Password_Manager.EncryptedMap;
-import Password_Manager.Encryption.Hmac.IntegrityException;
+import Password_Manager.Encryption.*;
 import Password_Manager.Registration;
 
 import org.eclipse.swt.*;
@@ -93,7 +93,7 @@ public class AuthenticationUI {
         try {
             passwords = new EncryptedMap(user, password);
             return true;
-        } catch (IntegrityException e) {
+        } catch (Hmac.IntegrityException e) {
             UIUtility.errorMessage("Login", "Wrong Password or corrupted files.");
             return false;
         } catch (Exception e) {
