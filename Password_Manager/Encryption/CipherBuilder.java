@@ -49,7 +49,7 @@ public class CipherBuilder {
 			ArrayList<ByteArray> data = fileReader.readData();
 			fileReader.close();
 
-			return data.get(0).getData();
+			return data.get(0).getRawBytes();
 		} catch (FileNotFoundException e) {
 			throw new Exception("Can't find salt file.");
 		} catch (Exception e) {

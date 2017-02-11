@@ -21,7 +21,7 @@ public class EncodedFileWriter {
 
 	public void writeData(ArrayList<ByteArray> dataToWrite) throws IOException {
 		for (ByteArray entry : dataToWrite) {
-			byte[] encoded = encodeBytes(entry.getData());
+			byte[] encoded = encodeBytes(entry.getRawBytes());
 
 			try {
 				fileOutStream.write(encoded);

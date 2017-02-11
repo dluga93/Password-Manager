@@ -28,7 +28,7 @@ public class EncryptedMap {
 
 		getKeys(password, masterKey, macKey);
 
-		cipher = CipherBuilder.build(masterKey.getData(), macKey.getData());
+		cipher = CipherBuilder.build(masterKey.getRawBytes(), macKey.getRawBytes());
 		tryReadPasswords(cipher);
 	}
 
@@ -38,22 +38,22 @@ public class EncryptedMap {
 
 		byte[] decryptedMasterKey =
 			decryptKey(password, Naming.masterSaltFilename(user), masterKey);
-		masterKey.setData(decryptedMasterKey);
+		masterKey.setRawBytes(decryptedMasterKey);
 
 		byte[] decryptedMacKey =
 			decryptKey(password, Naming.macSaltFilename(user), macKey);
-		macKey.setData(decryptedMacKey);
+		macKey.setRawBytes(decryptedMacKey);
 
 		// unmac keys
-		macKey.setData(Hmac.unwrap(macKey.getData()));
-		Hmac hmac = new Hmac(macKey.getData());
-		masterKey.setData(hmac.unmac(masterKey.getData()));
+		macKey.setRawBytes(Hmac.unwrap(macKey.getRawBytes()));
+		Hmac hmac = new Hmac(macKey.getRawBytes());
+		masterKey.setRawBytes(hmac.unmac(masterKey.getRawBytes()));
 	}
 
 	private byte[] decryptKey(String password, String saltFilename,
 		ByteArray encryptedKey) throws Exception {
 		StringCipher keyDecrypter = CipherBuilder.build(saltFilename, password);
-		return keyDecrypter.tryDecrypt(encryptedKey.getData());
+		return keyDecrypter.tryDecrypt(encryptedKey.getRawBytes());
 	}
 
 	private void tryReadKeys(String password, ByteArray masterKey, ByteArray macKey) 
@@ -85,8 +85,8 @@ public class EncryptedMap {
 
 	    fileReader.close();
 
-	    macKey.setData(encryptedKeys.get(macKeyIndexInFile).getData());
-	    masterKey.setData(encryptedKeys.get(masterKeyIndexInFile).getData());
+	    macKey.setRawBytes(encryptedKeys.get(macKeyIndexInFile).getRawBytes());
+	    masterKey.setRawBytes(encryptedKeys.get(masterKeyIndexInFile).getRawBytes());
 	}
 
 	private void tryReadPasswords(StringCipher cipher) throws Exception {
@@ -113,8 +113,8 @@ public class EncryptedMap {
 
 			fileReader.close();
 
-			String website = cipher.tryDecryptString(data.get(0).getData());
-			String password = cipher.tryDecryptString(data.get(1).getData());
+			String website = cipher.tryDecryptString(data.get(0).getRawBytes());
+			String password = cipher.tryDecryptString(data.get(1).getRawBytes());
 			passwordMap.put(website, password);
 		}
 	}
@@ -124,7 +124,7 @@ public class EncryptedMap {
 		ByteArray macKey = new ByteArray(Hmac.keyType.sizeInBytes());
 		tryReadKeys(oldPass, masterKey, macKey);
 		try {
-			new Registration(user, newPass, masterKey.getData(), macKey.getData());
+			new Registration(user, newPass, masterKey.getRawBytes(), macKey.getRawBytes());
 		} catch (FileAlreadyExistsException e) {
 			// supposed to happen because password folder already exists. ignore
 		}

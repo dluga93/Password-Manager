@@ -1,7 +1,7 @@
 package Password_Manager;
 
 /**
- * \brief Wrapper class for byte[]
+ * @brief Wrapper class for byte[]
  */
 public class ByteArray {
     private byte[] data;
@@ -27,7 +27,7 @@ public class ByteArray {
     /**
      * @return     The raw byte array
      */
-    public byte[] getData() {
+    public byte[] getRawBytes() {
         return data;
     }
 
@@ -35,7 +35,7 @@ public class ByteArray {
      * Sets the data in the byte array to the argument.
      *
      */
-    public void setData(byte[] data) {
+    public void setRawBytes(byte[] data) {
         this.data = data;
     }
 
