@@ -41,4 +41,4 @@ The other three files contain:
 * Hmac key salt
 * Password-encrypted master key and hmac key
 
-The master and hmac keys are encrypted with a third key generated from the stored salt and the master password using <a href="https://en.wikipedia.org/wiki/PBKDF2">PBKDF2</a> with HMAC-SHA1. If the user wants to change the master password, the application makes it easy by only re-encrypting the master and hmac keys. This means this operation won't take longer if you have a lot of entries saved.
+The master and hmac keys are encrypted with a third key generated from the stored salt and the master password using [PBKDF2](https://en.wikipedia.org/wiki/PBKDF2) with HMAC-SHA1. If the user wants to change the master password, the application makes it easy by only re-encrypting the master and hmac keys. This means this operation won't take longer if you have a lot of entries saved.
