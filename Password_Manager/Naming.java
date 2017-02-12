@@ -1,5 +1,8 @@
 package Password_Manager;
 
+/**
+ * @brief Class for generating file names
+ */
 public class Naming {
 	// file suffixes
 	private static final String masterKeyFileSuffix = "_key";
