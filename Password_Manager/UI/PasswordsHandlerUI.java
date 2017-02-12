@@ -8,18 +8,53 @@ import org.eclipse.swt.layout.*;
 import java.util.regex.Pattern;
 import java.io.*;
 
+/**
+ * @brief UI class to handle password related activities
+ * 
+ * UI class to displaying dialog boxes needed to perform
+ * activities like adding a password entry, changing a
+ * password entry, changing the master password etc.
+ */
 public class PasswordsHandlerUI {
-	private EncryptedMap passwords;
-	
+	private EncryptedMap passwords; ///< The set of password entries
+
+	/**
+	 * @brief Create the UI
+	 *
+	 * @param      passwords  The password entries
+	 */
 	public PasswordsHandlerUI(EncryptedMap passwords) {
 		this.passwords = passwords;
 	}
 
+	/**
+	 * @brief Create the list of entries in the UI
+	 * 
+	 * Creates the list of entries in the UI.
+	 * 
+	 * Each element
+	 * shows the website name, but the password is not shown. The
+	 * user can get the password by selecting the website whose
+	 * password he wants and using the Copy button in the Edit
+	 * menu. The password will be copied to the clipboard
+	 * and will be ready to be pasted.
+	 *
+	 * @param      list  The list that will be initialized with the
+	 * password entries.
+	 */
 	public void initializeList(List list) {
 		for (String entry : passwords.getWebsites())
 			list.add(entry, 0);
 	}
 
+	/**
+	 * @brief UI to add a password entry
+	 * 
+	 * Shows the UI to add a new password entry. Asks to input
+	 * the website and password for the entry.
+	 *
+	 * @param      list  The list where the entry will be added
+	 */
 	public void addPasswd(List list) {
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
@@ -56,6 +91,17 @@ public class PasswordsHandlerUI {
 		UIUtility.startShell(shell);
 	}
 
+	/**
+	 * @brief Add a password entry
+	 * 
+	 * Checks validity of the password and website, and
+	 * tries to add the password to the password map
+	 *
+	 * @param      website   The website
+	 * @param      password  The password
+	 *
+	 * @return     True if successful, false otherwise
+	 */
 	private boolean tryAddPassword(String website, String password) {
 		try {
 			isValid(website);
@@ -71,11 +117,22 @@ public class PasswordsHandlerUI {
 		}
 	}
 
+	/**
+	 * @brief Checks validity of the website string in an entry
+	 * 
+	 * The only website names allowed are those containing english alphabet
+	 * letters, numbers, dashes, underscores and dots.
+	 *
+	 * @param      website    The website
+	 *
+	 * @throws     Exception  If the website name is invalid.
+	 */
 	private void isValid(String website) throws Exception {
 		Pattern websitePattern = Pattern.compile("[a-zA-Z0-9_.-]+");
 		boolean match = websitePattern.matcher(website).matches();
 		if (!match)
-			throw new Exception("Invalid characters in website.");
+			throw new Exception("Invalid characters in website." +
+				" Use only english letters, numbers, dot, dash or underscore.");
 	}
 
 	public void editEntry(String website) {

@@ -6,12 +6,29 @@ import org.eclipse.swt.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.layout.*;
 
+/**
+ * @brief The main UI handler of the program
+ * 
+ * This class coordinates the general UI of the program,
+ * from asking for authentication in the beginning, to showing
+ * the main view with the menu and the password entries, to
+ * showing the different dialog boxes appearing when the
+ * user presses a menu item.
+ */
 public class MainUI {
-	public static Display display;
-	private Shell shell;
-	private List list;
-	private PasswordsHandlerUI passwordHandler;
+	public static Display display; ///< The Display object the program uses to display the shells
+	private Shell shell; ///< The main shell of the program
+	private List list; ///< The list of password entries
+	private PasswordsHandlerUI passwordHandler; ///< The UI used to handle most menu item presses
 
+	/**
+	 * @brief Starts the main UI
+	 * 
+	 * Starts the UI of the program, from asking the user to login or
+	 * register, to showing the main view with the menu bar and the
+	 * entry list, to displaying the Password handling dialog boxes
+	 * when needed.
+	 */
 	public MainUI() {
 		display = new Display();
 		shell = UIUtility.createShell(new FormLayout(), "Password Manager");
@@ -42,6 +59,15 @@ public class MainUI {
 		display.dispose ();
 	}
 
+	/**
+	 * @brief Create the File menu
+	 * 
+	 * Creates the File menu and its items, and adds it to the menu bar ```bar```.
+	 * You can create a new password, change the master password,
+	 * quit the program or delete your account.
+	 *
+	 * @param      bar   The menu bar where this menu will be added
+	 */
 	private void makeFileMenu(Menu bar) {
 		MenuItem menu = new MenuItem (bar, SWT.CASCADE);
 		menu.setText ("&File");
@@ -77,6 +103,14 @@ public class MainUI {
 			}});
 	}
 
+	/**
+	 * @brief Create the Edit menu
+	 * 
+	 * Create the Edit menu and its items, and add it to the menu bar ```bar```.
+	 * You can copy a password, delete a password or change a password.
+	 *
+	 * @param      bar   The menu bar where this menu will be added
+	 */
 	private void makeEditMenu(Menu bar) {
 		MenuItem menu = new MenuItem (bar, SWT.CASCADE);
 		menu.setText ("&Edit");
@@ -116,6 +150,18 @@ public class MainUI {
 			}});
 	}
 
+	/**
+	 * @brief Adds a menu item
+	 * 
+	 * Adds an item to a menu.
+	 *
+	 * @param      menu         The menu where the item will be added
+	 * @param      text         The text label of the item
+	 * @param      accelerator  A bit mask showing the keyboard shortcut that
+	 * can be used for this item.
+	 * @param      listener     The listener describing what happens when
+	 * the item is clicked/activated.
+	 */
 	private void addMenuPushItem(Menu menu, String text,
 							int accelerator, Listener listener) {
 		MenuItem item = new MenuItem(menu, SWT.PUSH);
@@ -124,6 +170,11 @@ public class MainUI {
 		item.addListener(SWT.Selection, listener);
 	}
 
+	/**
+	 * @brief Delete a user account
+	 *
+	 * @return     True if successfule, false otherwise.
+	 */
 	private boolean tryDeleteAccount() {
 		try {
 			passwordHandler.deleteAccount();
@@ -134,6 +185,14 @@ public class MainUI {
 		}
 	}
 
+	/**
+	 * @brief Delete a password entry
+	 *
+	 * @param      key   The website name that is used as the key
+	 * in the password map.
+	 *
+	 * @return     True if successful, false otherwise.
+	 */
 	private boolean tryDeleteEntry(String key) {
 		try {
 			passwordHandler.deletePassword(key);
