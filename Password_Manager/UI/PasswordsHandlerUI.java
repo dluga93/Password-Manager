@@ -135,6 +135,11 @@ public class PasswordsHandlerUI {
 				" Use only english letters, numbers, dot, dash or underscore.");
 	}
 
+	/**
+	 * @brief Show UI to edit a password entry
+	 *
+	 * @param      website  The website of the entry
+	 */
 	public void editEntry(String website) {
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
@@ -165,6 +170,12 @@ public class PasswordsHandlerUI {
 		UIUtility.startShell(shell);
 	}
 
+	/**
+	 * @brief Show UI to change the master password
+	 * 
+	 * The use will be asked for his previous password as well as
+	 * the new one.
+	 */
 	public void changeMasterPassword() {
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
@@ -193,6 +204,17 @@ public class PasswordsHandlerUI {
 		UIUtility.startShell(shell);
 	}
 
+	/**
+	 * @brief Change the master password
+	 * 
+	 * Calls the backend method to change the master password
+	 * and handle the files.
+	 *
+	 * @param      oldPassword  The old password
+	 * @param      newPassword  The new password
+	 *
+	 * @return     True if successful, false otherwise.
+	 */
 	private boolean tryChangeMasterPassword(String oldPassword, String newPassword) {
 		try {
 			passwords.tryChangeMasterPassword(oldPassword, newPassword);
@@ -203,14 +225,33 @@ public class PasswordsHandlerUI {
 		}
 	}
 
+	/**
+	 * @brief Get the password of an entry
+	 *
+	 * @param      website  The website of the entry
+	 *
+	 * @return     The password.
+	 */
 	public String getPassword(String website) {
 		return passwords.getWebsitePassword(website);
 	}
 
+	/**
+	 * @brief Delete a password entry
+	 *
+	 * @param      website    The website of the entry
+	 *
+	 * @throws     Exception  If an error occurred removing the password file.
+	 */
 	public void deletePassword(String website) throws Exception {
 		passwords.removeEntry(website);
 	}
 
+	/**
+	 * @brief Delete the account 
+	 *
+	 * @throws     Exception  If an error occurred trying to delete the user's files.
+	 */
 	public void deleteAccount() throws Exception {
 		passwords.deleteAccount();
 	}
